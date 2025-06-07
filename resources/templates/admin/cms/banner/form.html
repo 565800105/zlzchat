@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('轮播图表单')" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-css" />
+    <th:block th:include="admin/include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-banner" th:object="${entity}">
+            <input name="bannerId" th:field="*{bannerId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">名称：</label>
+                <div class="col-sm-4">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" maxlength="255" required>
+                </div>
+                <label class="col-sm-3 control-label is-required">类型：</label>
+                <div class="col-sm-3">
+                    <select name="typeId" class="form-control m-b" th:with="type=${@dict.getType('sys_banner_type')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${entity.typeId} ? ${entity.typeId == dict.dictValue} : ${dict.default}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">图片路径：</label>
+                <div class="col-sm-10">
+                    <input name="imageUrl" th:field="*{imageUrl}" class="form-control" type="text" maxlength="255" required style="margin-bottom: 10px">
+                    <input name="file" id="input-fileupload-image" type="file" class="file" />
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">跳转链接：</label>
+                <div class="col-sm-10">
+                    <input name="gotoUrl" th:field="*{gotoUrl}" class="form-control" type="text" maxlength="255">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">排序：</label>
+                <div class="col-sm-4">
+                    <input name="orderNum" th:field="*{orderNum}" class="form-control" type="text" digits="true">
+                </div>
+                <label class="col-sm-3 control-label">状态：</label>
+                <div class="col-sm-3">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_show_hide')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${entity.status} ? ${entity.status == dict.dictValue} : ${dict.default}">
+                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="remark" class="form-control" maxlength="500" rows="3">[[*{remark}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-js" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.bannerId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/banner";
+        // 表单验证初始化
+        $("#form-banner").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-banner').serialize());
+            }
+        }
+        // 图片上传
+        $("#input-fileupload-image").fileinput({
+            language:'zh',
+            uploadUrl:'/admin/common/upload',
+            maxFileCount: 1,
+            showUpload:true,
+            showPreview:true,
+            dropZoneEnabled:true,
+            maxFileSize:10 * 1024,
+            allowedFileExtensions: ["bmp", "gif", "jpg", "jpeg", "png"]
+        }).on("fileuploaded", function (event, data, previewId, index){
+            //异步上传成功
+            if(data.response.code === 0){
+                $("#imageUrl").val(data.response.fileName);
+            }else{
+                $.modal.msgError(data.response.msg)
+            }
+
+        }).on("fileerror",function(event, data, msg){
+            //异步上传错误
+            console.log("fileerror:" + data);
+        });
+    </script>
+</body>
+</html>

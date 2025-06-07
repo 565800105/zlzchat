@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('小红书文章表表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+    <th:block th:include="admin/include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-xhsuserarticles" th:object="${entity}">
+            <input name="articlesId" th:field="*{articlesId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" maxlength="255">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">图片列表：</label>
+                <div class="col-sm-8">
+                    <input name="imageList" th:field="*{imageList}" class="form-control" type="text" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">详情：</label>
+                <div class="col-sm-8">
+                    <textarea name="desc" class="form-control" maxlength="1000">[[*{desc}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">创建时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="publishTime" th:value="${#dates.format(entity.publishTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" date="true">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">视频地址：</label>
+                <div class="col-sm-8">
+                    <input name="video" th:field="*{video}" class="form-control" type="text" maxlength="255">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">更新至时间：</label>
+                <div class="col-sm-8">
+                    <input name="cursor" th:field="*{cursor}" class="form-control" type="text" maxlength="50">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <th:block th:include="admin/include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.articlesId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/xhsuserarticles";
+        // 表单验证初始化
+        $("#form-xhsuserarticles").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-xhsuserarticles').serialize());
+            }
+        }
+        // 日期控件初始化
+        $("input[name='publishTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

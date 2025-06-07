@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('文件表单')" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-files">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">批量上传：</label>
+                <div class="col-sm-10">
+                    <input name="file" id="input-fileupload" type="file" class="file" multiple />
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-js" />
+    <script th:inline="javascript">
+        var action = '/batchAdd';
+        var prefix = ctx + "cms/files";
+        // 表单验证初始化
+        $("#form-files").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-files').serialize());
+            }
+        }
+        $("#input-fileupload").fileinput({
+            language:'zh',
+            uploadUrl:'/admin/common/upload',
+            maxFileCount: 10,
+            showUpload:true,
+            showPreview:true,
+            dropZoneEnabled:true,
+            maxFileSize:[[${fileSize}]],
+            previewFileType: [[${fileExt}]],
+            allowedFileExtensions: [[${fileExt}]]
+        }).on("fileuploaded", function (event, data, previewId, index){
+            //异步上传成功
+            if(data.response.code === 0){
+                console.log(index)
+                console.log(data)
+            }else{
+                $.modal.msgError(data.response.msg)
+            }
+
+        }).on("fileerror",function(event, data, msg){
+            //异步上传错误
+            console.log("fileerror:" + data);
+        });
+
+    </script>
+</body>
+</html>

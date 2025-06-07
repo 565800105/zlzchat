@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="admin/include :: header('综合页')" />
+</head>
+<body class="gray-bg">
+<div class="dashboard" id="vueApp">
+    <div class="row">
+        <!--个人待办中心-->
+        <div class="col-sm-12">
+            <div class="board board-1">
+                <el-avatar :size="50" :src="avatar" ></el-avatar>
+                <div class="userName">
+                    <b>张小刚</b>项目经理
+                </div>
+                <ul>
+                    <li>
+                        <a href="#">项目数<count-to :start-val="0" :end-val="86" :duration="2000"></count-to></a>
+                    </li>
+                    <li>
+                        <a href="#">任务总数<count-to :start-val="0" :end-val="65" :duration="2000"></count-to></a>
+                    </li>
+                    <li>
+                        <a href="#">已完成<count-to :start-val="0" :end-val="30" :duration="2000"></count-to></a>
+                    </li>
+                    <li>
+                        <a href="#">待完成<count-to :start-val="0" :end-val="20" :duration="2000"></count-to></a>
+                    </li>
+                    <li>
+                        <a href="#">已延期<count-to :start-val="0" :end-val="15" :duration="2000"></count-to></a>
+                    </li>
+                    <li style="width: 250px">
+                        完成率
+                        <el-progress :percentage="completePercentage"></el-progress>
+                    </li>
+                    <li style="width: 250px">
+                        延期率
+                        <el-progress :percentage="delayPercentage" color="#f56c6c"></el-progress>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--注册人数-->
+        <div class="col-sm-3">
+            <div class="board board-3">
+                <el-progress type="circle" :percentage="peoplePercentage[0]" stroke-width="10" width="100"></el-progress>
+                <div class="info">
+                    注册人数 <count-to :start-val="0" :end-val="peopleNumber[0]" :duration="2000"></count-to>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="board board-3">
+                <el-progress type="circle" :percentage="peoplePercentage[1]" stroke-width="10" width="100" color="#E6A23C"></el-progress>
+                <div class="info">
+                    待审核人数 <count-to :start-val="0" :end-val="peopleNumber[1]" :duration="2000"></count-to>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="board board-3">
+                <el-progress type="circle" :percentage="peoplePercentage[2]" stroke-width="10" width="100" color="#67C23A"></el-progress>
+                <div class="info">
+                    审核通过人数 <count-to :start-val="0" :end-val="peopleNumber[2]" :duration="2000"></count-to>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="board board-3">
+                <el-progress type="circle" :percentage="peoplePercentage[3]" stroke-width="10" width="100" color="#F56C6C"></el-progress>
+                <div class="info">
+                    审核不通过人数 <count-to :start-val="0" :end-val="peopleNumber[3]" :duration="2000"></count-to>
+                </div>
+            </div>
+        </div>
+        <!--用户访问来源（饼状图）-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>用户访问来源</h5>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-pie-chart" style="height: 240px"></div>
+                </div>
+            </div>
+        </div>
+        <!--用户访问量（柱状图）-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>用户访问量</h5>
+                    <el-radio-group @input="radioSwitch" v-model="barData.type" size="mini">
+                        <el-radio-button label="周"></el-radio-button>
+                        <el-radio-button label="月"></el-radio-button>
+                    </el-radio-group>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-bar-chart" style="height: 240px"></div>
+                </div>
+            </div>
+        </div>
+        <!--入驻企业分布（饼状图）-->
+        <div class="col-sm-5">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>入驻企业分布</h5>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-pie-2-chart" style="height: 250px"></div>
+                </div>
+            </div>
+        </div>
+        <!--门户访问量（折线图）-->
+        <div class="col-sm-7">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>门户访问量</h5>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-line-chart" style="height: 250px"></div>
+                </div>
+            </div>
+        </div>
+        <!--城镇住房保障覆盖率（柱状图）-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>城镇住房保障覆盖率</h5>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-bar-2-chart" style="height: 300px"></div>
+                </div>
+            </div>
+        </div>
+        <!--产业运行监测（柱状+折线图）-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0">
+                <div class="board-title">
+                    <h5>产业运行监测</h5>
+                </div>
+                <div class="board-content">
+                    <div id="echarts-line-2-chart" style="height: 300px"></div>
+                </div>
+            </div>
+        </div>
+        <!--审核证书-->
+        <div class="col-sm-12">
+            <div class="board board-4">
+                <a href="#">
+                    <i class="el-icon-s-promotion"></i>
+                    <div class="info">
+                        待审核证书<span>12</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <i class="el-icon-s-check"></i>
+                    <div class="info">
+                        已审核证书<span>85</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <i class="el-icon-s-flag"></i>
+                    <div class="info">
+                        已审定证书<span>76</span>
+                    </div>
+                </a>
+                <a href="#">
+                    <i class="el-icon-lock"></i>
+                    <div class="info">
+                        已锁定证书<span>128</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!--校友注册-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>校友注册认证</h5>
+                </div>
+                <div class="board-content board-6" style="height: 300px">
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/01.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="36056" :duration="2000"></count-to>校友总数</div>
+                    </a>
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/03.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="15050" :duration="2000"></count-to>已认证数</div>
+                    </a>
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/04.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="21006" :duration="2000"></count-to>未认证数</div>
+                    </a>
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/02.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="18200" :duration="2000"></count-to>已注册数</div>
+                    </a>
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/05.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="859" :duration="2000"></count-to>校友卡数</div>
+                    </a>
+                    <a href="#">
+                        <img th:src="@{/static/zzp/vue/icon/06.png}" />
+                        <div class="info"><count-to :start-val="0" :end-val="1088" :duration="2000"></count-to>活动参与量</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!--办事服务-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>机关大院办事服务</h5>
+                </div>
+                <div class="board-content board-7" style="height: 300px">
+                    <a href="#" v-for="(item, index) in service" :key="index">
+                        <h5>{{item.name}}</h5>
+                        <ul class="info">
+                            <li>待办理 <b style="color: #ef4864; font-size: 14px;">{{item.todo}}</b></li>
+                            <li>已处理 <span style="color: #3196fa; font-size: 14px;">{{item.completed}}</span></li>
+                            <li style="color:#3196fa; font-size: 14px;">{{Math.round(item.completed/(item.completed + item.todo) * 1000) / 10}}%</li>
+                        </ul>
+                        <el-progress :percentage="Math.round(item.completed/(item.completed + item.todo) * 1000) / 10" :stroke-width="10" :show-text="false"></el-progress>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!--未来乡村设试点-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>未来乡村设试点</h5>
+                </div>
+                <div class="board-content board-8" style="height: 280px">
+                    <a href="#">建设数<b>21</b><i class="el-icon-s-data"></i></a>
+                    <a href="#">完成数<b>16</b><i class="el-icon-circle-check"></i></a>
+                    <a href="#">纳入数<b>13</b><i class="el-icon-star-on"></i></a>
+                    <a href="#">规划数<b>30</b><i class="el-icon-s-order"></i></a>
+                    <a href="#">整改数<b>8</b><i class="el-icon-s-help"></i></a>
+                    <a href="#">审批数<b>15</b><i class="el-icon-message-solid"></i></a>
+                </div>
+            </div>
+        </div>
+        <!--粮食播种及产量-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>粮食播种及产量</h5>
+                </div>
+                <div class="board-content board-9" style="height: 280px">
+                    <a href="#">年播种面积任务数<span>6.05 万亩</span></a>
+                    <a href="#">已播种面积<span>3.28 万亩</span></a>
+                    <a href="#">早稻育秧面积<span>1.16 万亩</span></a>
+                    <a href="#">粮食产量年任务数<span>2.35 万吨</span></a>
+                </div>
+            </div>
+        </div>
+        <!--待办事项-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>待办事项 <el-badge :value="12" :max="99"></el-badge></h5>
+                    <div class="info">
+                        <a href="#" class="more">查看更多<i class="el-icon-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="board-content board-2">
+                    <a href="#">
+                        <div class="info">蒋若诗发布了 <b style="color: #409EFF">7</b> 个证书等待你操作</div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">康丹发布了 <b style="color: #409EFF">5</b> 个证书等待你操作</div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">陈雅发布了 <b style="color: #409EFF">4</b> 个证书等待你操作</div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">周慧敏发布了 <b style="color: #409EFF">11</b> 个证书等待你操作</div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">汤佳睿发布了 <b style="color: #409EFF">8</b> 个证书等待你操作</div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!--已办事项-->
+        <div class="col-sm-6">
+            <div class="board" style="padding: 0;">
+                <div class="board-title">
+                    <h5>已办事项 <el-badge :value="1000" :max="999" type="success"></el-badge></h5>
+                    <div class="info">
+                        <a href="#" class="more">查看更多<i class="el-icon-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="board-content board-2">
+                    <a href="#">
+                        <div class="info">蒋若诗发布了 <b style="color: #409EFF">7</b> 个证书等待你操作 <el-tag type="success" size="mini">已完成</el-tag></div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">康丹发布了 <b style="color: #409EFF">5</b> 个证书等待你操作 <el-tag type="success" size="mini">已完成</el-tag></div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">陈雅发布了 <b style="color: #409EFF">4</b> 个证书等待你操作 <el-tag type="success" size="mini">已完成</el-tag></div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">周慧敏发布了 <b style="color: #409EFF">11</b> 个证书等待你操作 <el-tag type="warning" size="mini">已超时</el-tag></div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                    <a href="#">
+                        <div class="info">汤佳睿发布了 <b style="color: #409EFF">8</b> 个证书等待你操作 <el-tag type="success" size="mini">已完成</el-tag></div>
+                        <div class="time">2024-02-23 10:30</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!--线上招标采购-->
+        <div class="col-sm-12">
+            <div class="board board-5" style="padding: 0">
+                <div class="board-title">
+                    <h5>线上招标采购</h5>
+                    <el-button size="mini" @click="company.search=true"><i class="el-icon-search"></i> 检索</el-button>
+                </div>
+                <div class="board-content">
+                    <el-table :data="company.data" stripe show-summary sum-text="汇总" :summary-method="getSummaries" style="width: 100%">
+                        <el-table-column type="index" width="50"></el-table-column>
+                        <el-table-column prop="name" label="公司名称" width="280"></el-table-column>
+                        <el-table-column prop="total" sortable label="项目数">
+                            <template slot-scope="scope">
+                                <b style="color: #409EFF">{{scope.row.total}}</b> <span style="color: #999">个</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="inProgress" sortable label="进行中">
+                            <template slot-scope="scope">
+                                <b style="color: #666">{{scope.row.inProgress}}</b> <span style="color: #999">个</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="completed" sortable label="已完成">
+                            <template slot-scope="scope">
+                                <b style="color: #666">{{scope.row.completed}}</b> <span style="color: #999">个</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="completion" sortable label="完成率" width="260">
+                            <template slot-scope="scope">
+                                <div style="width: 180px">
+                                    <el-progress :percentage="scope.row.completion" :stroke-width="8" text-color="#999"/>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="money" sortable label="总金额">
+                            <template slot-scope="scope">
+                                <b style="color: #DD6161">{{scope.row.money}}</b> <span style="color: #999">万元</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="rate" sortable label="评价星级" width="200">
+                            <template slot-scope="scope">
+                                <el-rate v-model="scope.row.rate" disabled show-score text-color="#999" />
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <el-dialog title="检索条件" :visible.sync="company.search">
+        <el-form>
+            <el-form-item label="公司名称" :label-width="120">
+                <el-input v-model="company.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域" :label-width="120">
+                <el-date-picker
+                        v-model="company.dates"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="company.search=false" size="small">取 消</el-button>
+            <el-button type="primary" @click="companySearch" size="small">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+<th:block th:include="admin/include :: footer" />
+<th:block th:include="admin/include :: element-ui" />
+<th:block th:include="admin/include :: echarts-js" />
+<script th:src="@{/static/zzp/vue/vue-count-to.min.js}"></script>
+<script th:inline="javascript">
+    const vueApp = new Vue({
+        el: '#vueApp',
+        data(){
+            return{
+                avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+                completePercentage: 0,
+                delayPercentage: 0,
+                peopleNumber: [3608, 556, 2205, 847],
+                peoplePercentage: [0, 0, 0, 0],
+                barData: {
+                    type: '周',
+                    week: [
+                        {name: '周一', value: 120},
+                        {name: '周二', value: 200},
+                        {name: '周三', value: 150},
+                        {name: '周四', value: 80},
+                        {name: '周五', value: 70},
+                        {name: '周六', value: 110},
+                        {name: '周日', value: 130}
+                    ],
+                    month: [
+                        {name: '一月', value: 150},
+                        {name: '二月', value: 300},
+                        {name: '三月', value: 180},
+                        {name: '四月', value: 120},
+                        {name: '五月', value: 210},
+                        {name: '六月', value: 110},
+                        {name: '七月', value: 130},
+                        {name: '八月', value: 230},
+                        {name: '九月', value: 200},
+                        {name: '十月', value: 270},
+                        {name: '十一月', value: 250},
+                        {name: '十二月', value: 220}
+                    ]
+                },
+                company: {
+                    oldRadio: '',
+                    search: false,
+                    name: '',
+                    dates: null,
+                    data: [
+                        {name: '第一工程分公司', total: 8, inProgress: 3, completed: 5, money: 26984.75, rate: 4.5},
+                        {name: '第二工程分公司', total: 15, inProgress: 9, completed: 6, money: 344502, rate: 3.5},
+                        {name: '第三工程分公司', total: 13, inProgress: 12, completed: 2, money: 192946.81, rate: 4.0},
+                        {name: '建筑装饰分公司', total: 6, inProgress: 3, completed: 3, money: 19684.50, rate: 3.0},
+                        {name: '市政安装分公司', total: 12, inProgress: 5, completed: 7, money: 83254, rate: 4.5},
+                        {name: '物业管理有限公司', total: 0, inProgress: 0, completed: 0, money: 0, rate: 0},
+                    ]
+                },
+                industry:[
+                    {name: '鹿城', num: 6310800, speed: 14.6},
+                    {name: '龙湾', num: 2628900, speed: 13.9},
+                    {name: '瓯海', num: 3709500, speed: 15.7},
+                    {name: '洞头', num: 441800, speed: 10.1},
+                    {name: '永嘉', num: 2502300, speed: 10.3},
+                    {name: '平阳', num: 2695400, speed: 14.1},
+                    {name: '苍南', num: 1929600, speed: 12.1},
+                    {name: '文成', num: 573200, speed: 7},
+                    {name: '泰顺', num: 610400, speed: 11.9},
+                    {name: '瑞安', num: 5361500, speed: 15.4},
+                    {name: '乐清', num: 6308600, speed: 15.9},
+                    {name: '龙港', num: 1647608, speed: 13.4}
+                ],
+                service:[
+                    {name: '货物进出门单办理', completed: 133, todo: 60},
+                    {name: '新用户申请办理', completed: 20, todo: 4},
+                    {name: '人员通行办理', completed: 36, todo: 0},
+                    {name: '门禁变更办理', completed: 48, todo: 8},
+                    {name: '车辆新办理', completed: 67, todo: 27},
+                    {name: '门禁撤销办理', completed: 100, todo: 60}
+                ],
+                colors: ['#ef4864', '#facc14', '#3196fa', '#2fc25b', '#b620e0', '#6236ff', '#ff7e38', '#32b9e5']
+            }
+        },
+        created() {},
+        mounted() {
+            //进度条延迟赋值，产生动画
+            setTimeout(()=>{
+                this.completePercentage = 70;
+                this.delayPercentage = 30;
+                let total = this.peopleNumber[0];
+                this.peoplePercentage[0] = Math.round(this.peopleNumber[0] / total * 100);
+                this.peoplePercentage[1] = Math.round(this.peopleNumber[1] / total * 100);
+                this.peoplePercentage[2] = Math.round(this.peopleNumber[2] / total * 100);
+                this.peoplePercentage[3] = Math.round(this.peopleNumber[3] / total * 100);
+            }, 200);
+            //用户访问来源（饼状图）
+            let pieChart = echarts.init(document.getElementById("echarts-pie-chart"));
+            pieChart.setOption({
+                color: this.colors,
+                title : {text: '', subtext: '', x:'center'},
+                grid:{left: '5%', right: '5%', bottom: '5%', top: '10%',},
+                tooltip : {trigger: 'item', formatter: "{a} <br/>{b} : {c} ({d}%)"},
+                legend: {orient : 'vertical', top: '23%', right: '8%'},
+                calculable : true,
+                series : [
+                    {
+                        name:'访问来源',
+                        type:'pie',
+                        radius : '66%',
+                        center: ['35%', '50%'],
+                        data:[
+                            {value:335, name:'直接访问'},
+                            {value:310, name:'邮件营销'},
+                            {value:234, name:'联盟广告'},
+                            {value:135, name:'视频广告'},
+                            {value:1548, name:'搜索引擎'}
+                        ]
+                    }
+                ]
+            });
+            $(window).resize(pieChart.resize);
+            //入驻企业分布（饼状图）
+            let pieChart2 = echarts.init(document.getElementById("echarts-pie-2-chart"));
+            pieChart2.setOption({
+                color: this.colors,
+                tooltip : {trigger: 'item'},
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '5%',
+                    top: '20%',
+                    containLabel: true
+                },
+                series : [
+                    {
+                        name:'入驻企业',
+                        type:'pie',
+                        radius: ['40%', '70%'],
+                        itemStyle: {borderRadius: 5, borderColor: '#fff', borderWidth: 2},
+                        center: ['50%', '50%'],
+                        label: {
+                            alignTo: 'edge',
+                            formatter: '{b}\n{d}%',
+                            minMargin: 5,
+                            edgeDistance: 10,
+                            lineHeight: 15,
+                            rich: {
+                                time: {
+                                    fontSize: 10,
+                                    color: '#999'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            length: 15,
+                            length2: 0,
+                            maxSurfaceAngle: 80
+                        },
+                        labelLayout: function (params) {
+                            const isLeft = params.labelRect.x < 120;
+                            let points = params.labelLinePoints;
+                            points[2][0] = isLeft ? params.labelRect.x : params.labelRect.x + params.labelRect.width;
+                            return {labelLinePoints: points};
+                        },
+                        data:[
+                            {value:199, name:'设备类'},
+                            {value:310, name:'材料类'},
+                            {value:234, name:'机械设备租赁类'},
+                            {value:135, name:'专业工程类'},
+                            {value:104, name:'工程劳务类'},
+                            {value:375, name:'工程服务类'},
+                            {value:415, name:'劳务班组类'},
+                        ]
+                    }
+                ]
+            });
+            $(window).resize(pieChart2.resize);
+            //用户访问量（柱状图）
+            this.createBarChart(this.barData.week)
+            //门户访问量（折线图）
+            let lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+            lineChart.setOption({
+                title : {text: ''},
+                color: ['#FFBF00', '#00DDFF'],
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {data:['门户访问量','应用点击量']},
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '5%',
+                    top: '20%',
+                    containLabel: true
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        //axisLabel:{  interval: 0, rotate: 20}, //名称倾斜
+                        data : ['02/28', '02/27', '02/26', '02/25', '02/24', '02/23', '02/22', '02/21', '02/20', '02/19']
+                    }
+                ],
+                yAxis : [{type : 'value', axisLabel : {formatter: '{value}'}}],
+                series : [
+                    {
+                        name:'门户访问量',
+                        type:'line',
+                        smooth: true,
+                        lineStyle: {
+                            width: 1
+                        },
+                        showSymbol: true,
+                        label: {
+                            show: false,
+                            position: 'top'
+                        },
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(255, 191, 0, 0.8)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(224, 62, 76, 0.8)'
+                            }])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [500, 600, 700, 850, 980, 780, 650, 750, 820, 950]
+                    },
+                    {
+                        name:'应用点击量',
+                        type:'line',
+                        smooth: true,
+                        lineStyle: {
+                            width: 1
+                        },
+                        showSymbol: true,
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(0, 221, 255, 0.8)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(77, 119, 255, 0.8)'
+                            }])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [820, 500, 600,  850, 980, 780, 700, 650, 750, 950]
+                    }
+                ]
+            });
+            $(window).resize(lineChart.resize);
+            //城镇住房保障覆盖率（柱状图）
+            let barChart2 = echarts.init(document.getElementById("echarts-bar-2-chart"));
+            barChart2.setOption({
+                legend: {data: ["城镇", "农村"], top: "0"},
+                tooltip: {trigger: "axis", axisPointer: {type: "cross",label: {backgroundColor: "#6a7985"}}},
+                grid: {
+                    left: "5%",
+                    right: "5%",
+                    bottom: "5%",
+                    top: "20%",
+                    containLabel: true,
+                },
+                xAxis: {
+                    type: "category",
+                    axisTick: {
+                        alignWithLabel: true,
+                    },
+                    data: ["2016年", "2017年", "2018年", "2019年", "2020年", "2021年", "2022年"],
+                },
+                yAxis: [
+                    {
+                        type: "value",
+                        name: "单位(%)",
+                        min: 0,
+                        //max: 120,
+                        axisLine: {show: true},
+                    },
+                ],
+                series: [
+                    {
+                        name: "城镇",
+                        type: "bar",
+                        data: [50, 65, 75, 80, 85, 78, 90],
+                        barWidth: 20,
+                        label: {show: false},
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 1, color: "#79C0FF" },
+                                { offset: 0.5, color: "#67ACFF" },
+                                { offset: 0, color: "#5497FF" },
+                            ]),
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: "#2378f7" },
+                                    { offset: 0.4, color: "#2378f7" },
+                                    { offset: 1, color: "#83bff6" },
+                                ]),
+                            },
+                        },
+                    },
+                    {
+                        name: "农村",
+                        type: "bar",
+                        data: [55, 70, 80, 85, 90, 100, 105],
+                        barWidth: 20,
+                        label: {show: false},
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 1, color: "#FFBB78" },
+                                { offset: 0.5, color: "#FFAC5B" },
+                                { offset: 0, color: "#FF9E3F" },
+                            ]),
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: "#FF8731" },
+                                    { offset: 0.5, color: "#FF8731" },
+                                    { offset: 1, color: "#FFAC5B" },
+                                ]),
+                            },
+                        },
+                    },
+                ],
+            });
+            $(window).resize(barChart2.resize);
+            //产业运行监测（柱状+折线图）
+            let lineChart2 = echarts.init(document.getElementById("echarts-line-2-chart"));
+            lineChart2.setOption({
+                color: ['#37c76a', '#37c76a'],
+                legend: {data: ['地区生产总值', '增速'], top: '0'},
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(paramsList) {
+                        let params = paramsList[0], params2 = paramsList[1];
+                        return `<span>${params.name}</span>
+                                </br>
+                                <span style='color:#37c76a;font-size:18px' >●  </span>
+                                <span >${params.seriesName}
+                                <span style='float:right;margin-left:20px;' >
+                                <span style="font-weight: bold;" >${params.value}</span> 万元</span>
+                                </span>
+                                </br>
+                                <span style='color:#2378f7;font-size:18px' >●  </span>
+                                <span >${params2.seriesName}
+                                <span style='float:right;margin-left:20px;' >
+                                <span style="font-weight: bold;" >${params2.value}</span> %</span>
+                                </span>`;
+                    },
+                    axisPointer: {type: 'cross', label: { backgroundColor: '#6a7985'}}
+                },
+                xAxis: {
+                    type: 'category',
+                    axisTick: {alignWithLabel: true},
+                    data: this.industry.map(item => item.name),
+                    axisLine: {
+                        lineStyle: {color: '#E9E9E9'}
+                    },
+                    axisLabel: {color: '#666'}
+                },
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '5%',
+                    top: '20%',
+                    containLabel: true
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '单位(亿元)',
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: {lineStyle: {type: 'dashed'}},
+                        nameTextStyle: {fontWeight: 'bolder', fontSize: 13}
+                    },
+                    {
+                        type: 'value',
+                        name: '单位(%)',
+                        position: 'right',
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: {lineStyle: {type: 'dashed'}},
+                        nameTextStyle: {fontWeight: 'bolder', fontSize: 13}
+                    }
+                ],
+                series: [
+                    {
+                        name: '地区生产总值',
+                        type: 'bar',
+                        data: this.industry.map(item => item.num / 10000),
+                        barWidth: 16,
+                        label: {show: false},
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 1, color: '#79C0FF' },
+                                { offset: 0.5, color: '#67ACFF' },
+                                { offset: 0, color: '#5497FF' }
+                            ])
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: '#2378f7' },
+                                    { offset: 0.4, color: '#2378f7' },
+                                    { offset: 1, color: '#83bff6' }
+                                ])
+                            }
+                        }
+                    },
+                    {
+                        symbol: 'none',
+                        name: '增速',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: this.industry.map(item => item.speed),
+                        label: {show: false}
+                    }
+                ]
+            })
+            $(window).resize(lineChart2.resize);
+            //初始化完成率
+            this.company.data.forEach(item => item.completion = item.total > 0 ? Math.round(item.completed / item.total * 1000) / 10 : 0)
+        },
+        methods:{
+            radioSwitch(val){
+                if(val === '月'){
+                    this.createBarChart(this.barData.month)
+                }else if(val === '周'){
+                    this.createBarChart(this.barData.week)
+                }
+            },
+            createBarChart(data){
+                let barChart = echarts.init(document.getElementById("echarts-bar-chart"));
+                barChart.setOption({
+                    xAxis: {type: 'category', data: data.map(item => item.name)},
+                    tooltip : {trigger: 'item', formatter: "{a} <br/>{b} : {c} "},
+                    grid: {
+                        left: '5%',
+                        right: '5%',
+                        bottom: '5%',
+                        top: '10%',
+                        containLabel: true
+                    },
+                    yAxis: {type: 'value' },
+                    series: [
+                        {
+                            name:'访问量',
+                            barMaxWidth: 26,
+                            data: data.map(item => item.value),
+                            type: 'bar',
+                            showBackground: true,
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(64,158,255,1)' },
+                                    { offset: 1, color: 'rgba(64,158,255,.2)' }
+                                ])
+                            },
+                            emphasis: {
+                                itemStyle: {color: 'rgba(64,158,255,1)'}
+                            },
+                        }
+                    ]
+                }, true);
+                $(window).resize(barChart.resize);
+            },
+            getSummaries(param){
+                let { columns, data } = param, sums = [];
+                columns.forEach((column, index) => {
+                    if(index === 0){
+                        sums[index] = '';
+                        return;
+                    } else if (index === 1) {
+                        sums[index] = '汇总';
+                        return;
+                    } else {
+                        let values = data.map(item => Number(item[column.property])), sum = 0;
+                        values.forEach(item => sum += item);
+                        if(column.property === 'completion' || column.property === 'rate'){
+                            sums[index] = Math.round(sum / values.length * 100) / 100; //完成率和评价，求平均值
+                        }else {
+                            sums[index] = sum; //其他求总和
+                        }
+                    }
+                })
+                return sums;
+            },
+            companyRadioSwitch(val){
+                console.log(val, this.company.radio)
+                if(val === '检索'){
+                    this.company.search = true;
+                }
+            },
+            companySearch(){
+                this.company.search = false;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

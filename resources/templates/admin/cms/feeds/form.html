@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('公众号信息表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+    <th:block th:include="admin/include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-feeds" th:object="${entity}">
+            <input name="feedId" th:field="*{feedId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">显示多少条：</label>
+                <div class="col-sm-8">
+                    <input name="showCount" th:field="*{showCount}" class="form-control" type="number" maxlength="3">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">是否自动更新：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box"  >
+                        <input id="status1" type="radio"  th:field="*{status}" name="status" value="1" >
+                        <label for="status1" >否</label>
+                    </div>
+                    <div class="radio-box" >
+                        <input id="status2" type="radio" th:field="*{status}"  name="status" value="2" >
+                        <label for="status2">是</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <th:block th:include="admin/include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.feedId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/feeds";
+        // 表单验证初始化
+        $("#form-feeds").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-feeds').serialize());
+            }
+        }
+        // 日期控件初始化
+        $("input[name='syncTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

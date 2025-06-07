@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('前端用户表单')" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-css" />
+    <th:block th:include="admin/include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <div class="nav-tabs-custom" style="box-shadow:none;">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-basic" data-toggle="tab" aria-expanded="true">基本信息</a></li>
+                <li><a href="#tab-other" data-toggle="tab" aria-expanded="false">账户信息</a></li>
+            </ul>
+            <form class="form-horizontal m" id="form-member" th:object="${entity}">
+                <input name="memberId" th:field="*{memberId}" type="hidden">
+                <div class="tab-content">
+                    <!--基本信息-->
+                    <div class="tab-pane active" id="tab-basic">
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label is-required">所属部门：</label>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <input name="deptId" id="deptId" type="hidden" th:value="${entity.deptId} ? ${entity.deptId} : 0">
+                                    <input name="deptName" onclick="selectDeptTree()" id="deptName" type="text" placeholder="请选择归属部门" class="form-control" th:value="${entity.deptName} ? ${entity.deptName} : ''" required>
+                                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                                </div>
+                            </div>
+                            <label class="col-sm-2 control-label is-required">会员类型：</label>
+                            <div class="col-sm-4">
+                                <select name="typeId" class="form-control" th:with="type=${@dict.getType('sys_member_type')}" required>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${entity.typeId} ? ${#numbers.formatInteger(entity.typeId,0) == dict.dictValue} : ${dict.default}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label is-required">昵称：</label>
+                            <div class="col-sm-4">
+                                <input name="nickName" th:field="*{nickName}" class="form-control" type="text" maxlength="50" required>
+                            </div>
+                            <label class="col-sm-2 control-label">出生年月：</label>
+                            <div class="col-sm-4">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="birthday" th:value="${#dates.format(entity.birthday, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" isBirth="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">手机号：</label>
+                            <div class="col-sm-4">
+                                <input name="phone" th:field="*{phone}" class="form-control" type="text" maxlength="20" isPhone="true">
+                            </div>
+                            <label class="col-sm-2 control-label">性别：</label>
+                            <div class="col-sm-4">
+                                <select name="sex" class="form-control" th:with="type=${@dict.getType('sys_user_sex')}">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${entity.sex} ? ${#numbers.formatInteger(entity.sex,0) == dict.dictValue} : ${dict.default}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">邮箱：</label>
+                            <div class="col-sm-4">
+                                <input name="email" th:field="*{email}" class="form-control" type="text" maxlength="50" email="true">
+                            </div>
+                            <label class="col-sm-2 control-label">身份证：</label>
+                            <div class="col-sm-4">
+                                <input name="cardId" th:field="*{cardId}" class="form-control" type="text" maxlength="20" isIdentity="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">地址：</label>
+                            <div class="col-sm-4">
+                                <input name="address" th:field="*{address}" class="form-control" type="text" maxlength="200">
+                            </div>
+                            <label class="col-sm-2 control-label">状态：</label>
+                            <div class="col-sm-4">
+                                <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                                    <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${entity.status} ? ${#numbers.formatInteger(entity.status,0) == dict.dictValue} : ${dict.default}">
+                                    <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">头像：</label>
+                            <div class="col-sm-10">
+                                <input name="avatar" th:field="*{avatar}" class="form-control" type="text" maxlength="100" style="margin-bottom: 10px">
+                                <input name="file" id="input-fileupload" type="file" class="file" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab-other">
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">账号：</label>
+                            <div class="col-sm-4">
+                                <input name="userName" th:field="*{userName}" class="form-control" type="text" maxlength="50" isUserName="true">
+                            </div>
+                            <label class="col-sm-2 control-label">用户编码：</label>
+                            <div class="col-sm-4">
+                                <input name="guidCode" th:field="*{guidCode}" class="form-control" type="text" maxlength="50" readonly="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">密码：</label>
+                            <div class="col-sm-4">
+                                <input name="password" th:field="*{password}" class="form-control" type="text" maxlength="20" minlength="5" placeholder="修改密码时填写">
+                            </div>
+                            <label class="col-sm-2 control-label">微信OpenID：</label>
+                            <div class="col-sm-4">
+                                <input name="openid" th:field="*{openid}" class="form-control" type="text" maxlength="64">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 control-label">钉钉UserID：</label>
+                            <div class="col-sm-4">
+                                <input name="ddUserid" th:field="*{ddUserid}" class="form-control" type="text" maxlength="64">
+                            </div>
+                            <label class="col-sm-2 control-label">UnionID：</label>
+                            <div class="col-sm-4">
+                                <input name="unionid" th:field="*{unionid}" class="form-control" type="text" maxlength="64">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label class="col-sm-2 control-label">备注：</label>
+                            <div class="col-sm-10">
+                                <textarea name="remark" class="form-control" maxlength="500" rows="4">[[*{remark}]]</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-js" />
+    <th:block th:include="admin/include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.memberId} ? |/edit| : |/add|]];
+        var prefix = ctx + "system/member";
+        // 表单验证初始化
+        $("#form-member").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-member').serialize());
+            }
+        }
+        $("input[name='birthday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        }).val();
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#deptId").val()) || $("#deptId").val()==0 ? "105" : $("#deptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId + "/0";
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = $.modal.getChildFrame(index);
+                $("#deptId").val(body.find('#treeId').val());
+                $("#deptName").val(body.find('#treeName').val());
+                $.modal.close(index);
+            }
+        }
+        // 图片上传
+        $("#input-fileupload").fileinput({
+            language:'zh',
+            uploadUrl:'/admin/common/upload',
+            maxFileCount: 1,
+            showUpload:true,
+            showPreview:false,
+            dropZoneEnabled:false,
+            maxFileSize:10 * 1024,
+            allowedFileExtensions: ["bmp", "gif", "jpg", "jpeg", "png"]
+        }).on("fileuploaded", function (event, data, previewId, index){
+            //异步上传成功
+            if(data.response.code === 0){
+                $("#avatar").val(data.response.fileName);
+            }else{
+                $.modal.msgError(data.response.msg)
+            }
+
+        }).on("fileerror",function(event, data, msg){
+            //异步上传错误
+            console.log("fileerror:" + data);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('用户表单')" />
+</head>
+<body class="white-bg">
+<div class="wrapper-content" id="vueApp">
+    <el-form :model="formData" ref="formData" label-width="100px" class="demo-dynamic">
+        <input name="memberId" v-model="formData.memberId" type="hidden" />
+        <el-tabs type="card" v-model="tabActiveName">
+            <el-tab-pane label="基本信息" name="info">
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="部门" prop="deptId" :rules="[
+                            { required: true, message: '选择所属部门', trigger: 'change' }
+                        ]">
+                            <el-cascader placeholder="选择所属部门" v-model="formData.deptId" :options="deptList" :props="{emitPath: false}" style="width: 100%" filterable clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="类型" prop="typeId" :rules="[
+                            { required: true, message: '选择用户类型', trigger: 'change' }
+                        ]">
+                            <el-select v-model="formData.typeId" placeholder="选择用户类型" style="width: 100%" clearable>
+                                <el-option v-for="item in typeOption" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue" />
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="昵称" prop="nickName" :rules="[
+                            { required: true, message: '请输入用户姓名', trigger: 'blur' },
+                            { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+                        ]">
+                            <el-input v-model="formData.nickName" placeholder="请输入用户姓名" maxlength="20" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="出生年月">
+                            <el-date-picker placeholder="选择出生日期" v-model="formData.birthday" value-format="yyyy-MM-dd" style="width: 100%" clearable />
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="手机号">
+                            <el-input v-model="formData.phone" placeholder="请输入手机号码" maxlength="11" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="性别">
+                            <el-select v-model="formData.sex" placeholder="选择用户性别" style="width: 100%" clearable>
+                                <el-option v-for="item in sexOption" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue" />
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="邮箱" prop="email" :rules="[
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                        ]">
+                            <el-input v-model="formData.email" placeholder="请输入邮箱地址" maxlength="50" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="身份证">
+                            <el-input v-model="formData.cardId" placeholder="请输入身份证号码" maxlength="20" clearable />
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="地址">
+                            <el-input v-model="formData.address" placeholder="请输入联系地址" maxlength="200" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6 fadeIn animated" style="animation-delay:100ms">
+                        <el-form-item label="状态">
+                            <el-radio-group v-model="formData.status">
+                                <el-radio v-for="item in statusOption" :label="item.dictValue">{{item.dictLabel}}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <el-form-item label="头像">
+                            <images-upload :datalist.sync="formData.avatar" />
+                        </el-form-item>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="账户信息" name="other">
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="账号" prop="userName" :rules="[
+                           { min: 3, max: 20, message: '账号长度在 3 到 20 个字符', trigger: 'blur' }
+                        ]">
+                            <el-input v-model="formData.userName" placeholder="请输入用户账号" maxlength="20" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="编码" >
+                            <el-input v-model="formData.guidCode" disabled="true"/>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="密码" prop="password" :rules="[
+                           { validator: (rule, value, callback) => {
+                                if (value != '') {
+                                    if(value.length < 6 || value.length > 20){
+                                        callback(new Error('密码长度在 6 到 20 个字符'));
+                                    }else if(!$.common.charValid(value)){
+                                        callback(new Error('密码必须包含字母、数字以及特殊符号'));
+                                    }
+                                }
+                                callback();
+                           }, trigger: 'blur'}
+                        ]">
+                            <el-input type="password" v-model="formData.password" placeholder="请输入登录密码" maxlength="20" auto-complete="new-password" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="微信OpenID">
+                            <el-input v-model="formData.openid" placeholder="请输入微信OpenID" maxlength="64" clearable />
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <el-form-item label="钉钉UserID">
+                            <el-input v-model="formData.ddUserid" placeholder="请输入钉钉UserID" maxlength="64" clearable />
+                        </el-form-item>
+                    </div>
+                    <div class="col-sm-6">
+                        <el-form-item label="UnionID">
+                            <el-input v-model="formData.UnionID" placeholder="请输入UnionID" maxlength="64" clearable />
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <el-form-item label="备注">
+                            <el-input type="textarea" v-model="formData.remark" />
+                        </el-form-item>
+                    </div>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </el-form>
+</div>
+<th:block th:include="admin/include :: footer" />
+<th:block th:include="admin/include :: element-ui" />
+<script th:src="@{/static/zzp/vue/draggable/Sortable.min.js}"></script>
+<script th:src="@{/static/zzp/vue/draggable/vuedraggable.umd.min.js}"></script>
+<script th:src="@{/static/zzp/vue/JD_ImagesUpload.js}"></script>
+<script th:inline="javascript">
+    const entity = [[${entity}]], action = entity.memberId == null ? '/add' : '/edit', prefix = ctx + "demo/element";
+    //初始化默认值
+    Object.keys(entity).forEach((key) => {
+        if (entity[key] === null) {
+            entity[key] = '';
+        }
+    });
+    // 0 == '' ：true
+    entity.status = entity.status == '' ? '0' : entity.status.toString();
+    entity.typeId = (entity.typeId == 0 || entity.typeId != '') ? entity.typeId.toString() : '';
+    entity.sex = (entity.sex == 0 || entity.sex != '') ? entity.sex.toString() : '';
+
+    var vueApp = new Vue({
+        el: '#vueApp',
+        data(){
+            return{
+                tabActiveName: 'info',
+                deptList: [],
+                typeOption: [[${@dict.getType('sys_member_type')}]],
+                statusOption: [[${@dict.getType('sys_normal_disable')}]],
+                sexOption: [[${@dict.getType('sys_user_sex')}]],
+                formData: entity
+            }
+        },
+        created() {
+            // 获取部门数据
+            let _this = this;
+            $.ajax({
+                url: prefix + "/getDeptList",
+                type: 'get',
+                dataType: 'json',
+                success: function(res) {
+                    _this.deptList = res.data;
+                }
+            })
+        },
+        mounted() {},
+        methods:{
+            submitForm(formName){
+                this.$refs['formData'].validate((valid) => {
+                    console.log(valid, this.formData);
+                    if (valid) {
+                        ["createTime", "createBy", "updateTime", "updateBy"].forEach(key => delete this.formData[key]);
+                        $.operate.save(prefix + action, this.formData);
+                    } else {
+                        return false;
+                    }
+                });
+            }
+        }
+    })
+
+    // 提交保存
+    function submitHandler() {
+        vueApp.submitForm('formData');
+    }
+</script>
+</body>
+</html>

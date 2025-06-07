@@ -1,0 +1,213 @@
+/**
+ * CNVP JDSoft login style
+ * Copyright (c) 2022.12 wx:smanor qq:1139167675
+ */
+html {
+	height:100%; font-size: 14px; color:#666;
+}
+body.signin {
+	background: url(../img/login-bg.svg) right top no-repeat;
+	background-size: cover; height: auto;
+	background-attachment: scroll;
+	background-origin: border-box;
+}
+.signinpanel {
+	width:800px;
+	margin:10% auto 0 auto;
+	background-color: #fff;
+	display: flex; border-radius: 8px;
+	justify-content: space-between;
+	overflow: hidden;
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.15);
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.15);
+	box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+.signinpanel .left{
+	width: 330px; padding: 30px 20px 0 20px;
+	background: url(../img/login-bg-right.svg) bottom center no-repeat;
+	background-size: cover; text-align: center;
+}
+.signinpanel h2{color: #3f9cfb; line-height: 36px}
+.signinpanel .left>span{text-transform: uppercase; color: #aaa;	font-size: 12px;}
+.signinpanel .right{width: 470px; padding:45px 50px 100px 50px; box-sizing: border-box;}
+.signinpanel h3{color: #888;font-size: 20px;margin-bottom: 50px;}
+.signinpanel h3 span{font-weight: normal;font-size: 14px;margin-left: 10px;}
+.signinpanel .form-row{
+	display: flex;
+	border: 1px solid rgba(228, 228, 228, 1);
+	border-radius: 8px;
+	margin-bottom: 20px;
+	transition:all ease-out .2s 0s;
+	-webkit-transition:all ease-out .2s 0s;
+	-moz-transition:all ease-out .2s 0s;
+	-o-transition:all ease-out .2s 0s;
+}
+.signinpanel .form-row>i{
+	width: 50px; line-height: 50px;
+	font-size: 18px; color: #c9c9c9; text-align: center;
+	transition:all ease-out .2s 0s;
+	-webkit-transition:all ease-out .2s 0s;
+	-moz-transition:all ease-out .2s 0s;
+	-o-transition:all ease-out .2s 0s;
+}
+.signinpanel .focus{
+	border-color: #3f9cfb;
+	-moz-box-shadow:0 0 5px rgba(64, 158, 255, 0.25);
+	-webkit-box-shadow:0 0 5px rgba(64, 158, 255, 0.25);
+	box-shadow:0 0 5px rgba(64, 158, 255, 0.25);
+}
+.signinpanel .error{
+	border-color: rgba(219, 9, 29, 0.5);
+	-moz-box-shadow:0 0 5px rgba(219, 9, 29, 0.2);
+	-webkit-box-shadow:0 0 5px rgba(219, 9, 29, 0.2);
+	box-shadow:0 0 5px rgba(219, 9, 29, 0.2);
+}
+.signinpanel .error>i{color: rgba(219, 9, 29, 0.5);}
+.signinpanel .focus>i{color: #3f9cfb}
+.signinpanel .form-row>input {
+	color: #666; font-size: 16px !important;
+	display:block;  height: 50px;
+	margin: 0; padding: 0;
+	border-radius: 8px; width: 180px;
+	border-width: 0; outline:0;
+	letter-spacing: 1px;
+}
+.signinpanel .pwd-row>span{
+	width: 40px;
+	line-height: 40px;
+	margin: 5px 5px 5px auto;
+	text-align: center;
+	cursor: pointer;
+	opacity: 0;
+	-webkit-transition:all ease-out .2s 0s;
+	-moz-transition:all ease-out .2s 0s;
+	-o-transition:all ease-out .2s 0s;
+}
+.signinpanel .pwd-row>span i{
+	font-size: 14px; color: #ddd;
+	-webkit-transition:all ease-out .2s 0s;
+	-moz-transition:all ease-out .2s 0s;
+	-o-transition:all ease-out .2s 0s;
+}
+.signinpanel .pwd-row>span:hover i{color: #3f9cfb}
+.signinpanel .pwd-row:hover > span{opacity: 1;}
+
+.signinpanel .form-row>input::-moz-placeholder{color:#999;opacity:1;font-size: 14px; letter-spacing: 0;}
+.signinpanel .form-row>input:-ms-input-placeholder{color:#999;font-size: 14px;letter-spacing: 0;}
+.signinpanel .form-row>input::-webkit-input-placeholder{color:#999;font-size: 14px;letter-spacing: 0;}
+.signinpanel .form-row>input:focus{border-width: 0;}
+.form-row>input:-webkit-autofill,
+.form-row>input:-webkit-autofill:hover,
+.form-row>input:-webkit-autofill:active,
+.form-row>input:-webkit-autofill:focus{
+	transition: background-color 9999s ease-in-out 0s;
+	-webkit-text-fill-color: #666;
+	font-size: 16px !important;
+}
+.form-row>input:-webkit-autofill::first-line{font-size: 16px !important;}
+.signinpanel .form-captcha{display: flex; justify-content: space-between; align-items: center;margin-bottom: 20px;}
+.signinpanel .form-captcha .form-row{width: 65%; margin-bottom: 0}
+.signinpanel .form-captcha>a{
+	border-radius: 8px;
+	width: 30%; height: 50px;
+	border: 1px solid rgba(228, 228, 228, 1);
+	background-color:#f5f5f5;
+	overflow: hidden;
+}
+.signinpanel .form-captcha>a img{width: 100%; height: 100%;}
+.signinpanel .btn {
+	outline:0; font-size: 16px;
+	margin-top:15px;
+	padding: 10px 12px;
+	background-color: #3f9cfb;
+	border-color: #2e93fa;
+	transition:all ease-out .2s 0s;
+	-webkit-transition:all ease-out .2s 0s;
+	-moz-transition:all ease-out .2s 0s;
+	-o-transition:all ease-out .2s 0s;
+}
+.signinpanel .btn:hover,.signinpanel .btn:active,.signinpanel .btn:focus{
+	background-color: #2e93fa;outline:0 !important;
+	box-shadow:inset 0 0 0 rgba(0,0,0,0);
+	-webkit-box-shadow:inset 0 0 0 rgba(0,0,0,0);
+}
+.signinpanel .loading{
+	cursor:not-allowed; opacity: 0.8;
+	background: url("../img/loading.svg") 40% center no-repeat #2e93fa;
+	background-size: 20px 20px;
+}
+.signup-footer{
+	text-align: center;
+	color: rgba(0, 0, 0, 0.3);
+	margin:30px 0;
+}
+.signup-footer a{color: rgba(0, 0, 0, 0.3);}
+.signup-footer a:hover{color: rgba(0, 0, 0, 0.8);text-decoration: underline}
+
+@media screen and (max-width:768px) {
+	html,body{font-size: 12px;-webkit-text-size-adjust:100% !important}
+	.signinpanel {
+		margin:15% auto 20px auto; padding:0;
+		width:90% !important;
+	}
+	.signinpanel .right{
+		padding: 20px 15px;
+	}
+	.signinpanel h3{margin-bottom: 20px;}
+	.signinpanel .left {display: none;}
+	.form-captcha .form-row>input{width:120px}
+
+}
+@media screen and (max-width:320px) {
+	.signinpanel,.signuppanel {
+		margin:0 20px;
+		width:auto
+	}
+}
+/*
+登录界面check样式
+*/
+.checkbox-custom {position: relative; padding: 0 15px 0 25px; margin-bottom: 7px; display: inline-block;}
+/*
+将初始的checkbox的样式改变
+*/
+.checkbox-custom input[type="checkbox"] {
+    opacity: 0; /*将初始的checkbox隐藏起来*/
+    position: absolute; cursor: pointer;
+    z-index: 2; margin: -6px 0 0 0;
+    top: 50%; left: 3px;
+}
+/*
+设计新的checkbox，位置
+*/
+.checkbox-custom label:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -9px;
+    width: 18px;
+    height: 17px;
+    display: inline-block;
+    border-radius: 2px;
+    border: 1px solid rgba(228, 228, 228, 1);
+    background: #fff;
+}
+/*
+点击初始的checkbox，将新的checkbox关联起来
+*/
+.checkbox-custom input[type="checkbox"]:checked +label:after {
+    position: absolute;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    content: "\e013";
+    top: 42%;
+    left: 3px;
+    margin-top: -5px;
+    font-size: 11px;
+    line-height: 1;
+    width: 16px;
+    height: 16px;
+    color: #3f9cfb;
+}
+.checkbox-custom label { cursor: pointer; line-height: 1.2; font-weight: normal; margin-bottom: 0; text-align: left; color: #999;}

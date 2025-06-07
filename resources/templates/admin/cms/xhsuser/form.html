@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('小红书用户表表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-xhsuser" >
+            <input name="userId"  type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">小红书id：</label>
+                <div class="col-sm-8">
+                    <input name="redId" id="redId" class="form-control" type="text" maxlength="50">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.userId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/xhsuser";
+        // 表单验证初始化
+        $("#form-xhsuser").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-xhsuser').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

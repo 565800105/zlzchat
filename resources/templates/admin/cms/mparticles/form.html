@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('文章信息表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+    <th:block th:include="admin/include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-mparticles" th:object="${entity}">
+            <input name="articlesId" th:field="*{articlesId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">：</label>
+                <div class="col-sm-8">
+                    <input name="originalId" th:field="*{originalId}" class="form-control" type="text" required maxlength="40">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">：</label>
+                <div class="col-sm-8">
+                    <input name="mpId" th:field="*{mpId}" class="form-control" type="text" required maxlength="255">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" required maxlength="255">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">：</label>
+                <div class="col-sm-8">
+                    <textarea name="docUrl" class="form-control" required maxlength="500" url="true">[[*{docUrl}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">：</label>
+                <div class="col-sm-8">
+                    <input name="picUrl" th:field="*{picUrl}" class="form-control" type="text" required maxlength="255" url="true">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">创建时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="publishTime" th:value="${#dates.format(entity.publishTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" required date="true">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <th:block th:include="admin/include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.articlesId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/mparticles";
+        // 表单验证初始化
+        $("#form-mparticles").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-mparticles').serialize());
+            }
+        }
+        // 日期控件初始化
+        $("input[name='publishTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

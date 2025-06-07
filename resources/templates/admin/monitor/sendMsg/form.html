@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('短信发送记录表单')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-msg" th:object="${entity}">
+                        <input name="msgId" th:field="*{msgId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">手机号：</label>
+                <div class="col-sm-4">
+                    <input name="tel" th:field="*{tel}" class="form-control" type="text" maxlength="20" isPhone="true" required>
+                </div>
+                <label class="col-sm-2 control-label">验证码：</label>
+                <div class="col-sm-3">
+                    <input name="code" th:field="*{code}" class="form-control" type="text" maxlength="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">短信内容：</label>
+                <div class="col-sm-9">
+                    <textarea name="sendContent" class="form-control" maxlength="500">[[*{sendContent}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">其他内容：</label>
+                <div class="col-sm-9">
+                    <input name="otherText" th:field="*{otherText}" class="form-control" type="text" maxlength="50">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">其他Id：</label>
+                <div class="col-sm-4">
+                    <input name="otherId" th:field="*{otherId}" class="form-control" type="text" digits="true">
+                </div>
+                <label class="col-sm-2 control-label">状态：</label>
+                <div class="col-sm-4">
+                    <div class="radio-box">
+                        <input type="radio" id="used_0" name="used" value="0" th:checked="${entity.used} == 0">
+                        <label for="used_0">未使用</label>
+                    </div>
+                    <div class="radio-box">
+                        <input type="radio" id="used_1" name="used" value="1" th:checked="${entity.used} == 1">
+                        <label for="used_1">已使用</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-9">
+                    <textarea name="remark" class="form-control" maxlength="500">[[*{remark}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <script th:inline="javascript">
+        var action = [[${entity.msgId} ? |/edit| : |/add|]];
+        var prefix = ctx + "monitor/sendMsg";
+        // 表单验证初始化
+        $("#form-msg").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-msg').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

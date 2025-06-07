@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('文章表单')" />
+    <th:block th:include="admin/include :: bootstrap-fileinput-css" />
+    <th:block th:include="admin/include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-article" th:object="${entity}">
+        <input name="articleId" th:field="*{articleId}" type="hidden">
+        <div class="row form-group">
+            <label class="col-sm-2 control-label is-required">文章标题：</label>
+            <div class="col-sm-10">
+                <input name="title" th:field="*{title}" class="form-control" type="text" maxlength="255" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">副标题：</label>
+            <div class="col-sm-4">
+                <input name="subTitle" th:field="*{subTitle}" class="form-control" type="text" maxlength="255">
+            </div>
+            <label class="col-sm-2 control-label is-required">栏目：</label>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <input id="treeId" name="columnId" type="hidden" th:value="${entity.columnId} ? ${entity.columnId} : 0" required/>
+                    <input class="form-control" type="text" onclick="selectColumnTree()" id="treeName" th:value="${entity.columnName} ? ${entity.columnName} : ''" readonly="true" required>
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">作者：</label>
+            <div class="col-sm-4">
+                <input name="author" th:field="*{author}" class="form-control" type="text" maxlength="50">
+            </div>
+            <label class="col-sm-2 control-label">来源：</label>
+            <div class="col-sm-4">
+                <input name="source" th:field="*{source}" class="form-control" type="text" maxlength="50">
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">排序：</label>
+            <div class="col-sm-4">
+                <input name="orderNum" th:field="*{orderNum}" class="form-control" type="text" digits="true">
+            </div>
+            <label class="col-sm-2 control-label">点击量：</label>
+            <div class="col-sm-4">
+                <input name="click" th:field="*{click}" class="form-control" type="text" digits="true">
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">跳转链接：</label>
+            <div class="col-sm-4">
+                <input name="url" th:field="*{url}" class="form-control" type="text" maxlength="255">
+            </div>
+            <label class="col-sm-2 control-label">关键词：</label>
+            <div class="col-sm-4">
+                <input name="keyword" th:field="*{keyword}" class="form-control" type="text" maxlength="255">
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">图片地址：</label>
+            <div class="col-sm-4">
+                <input name="images" th:field="*{images}" class="form-control" type="text" maxlength="255" style="margin-bottom: 10px">
+                <input name="file" id="input-fileupload-image" type="file" class="file" />
+            </div>
+            <label class="col-sm-2 control-label">附件地址：</label>
+            <div class="col-sm-4">
+                <input name="files" th:field="*{files}" class="form-control" type="text" maxlength="255" style="margin-bottom: 10px">
+                <input name="file" id="input-fileupload-file" type="file" class="file" />
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label is-required">发布时间：</label>
+            <div class="col-sm-4">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="postTime" th:value="${#dates.format(entity.postTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd hh:mm:ss" type="text" date="true" required>
+                </div>
+            </div>
+            <label class="col-sm-2 control-label">状态：</label>
+            <div class="col-sm-2">
+                <div class="radio-box" th:each="dict : ${@dict.getType('sys_show_hide')}">
+                    <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${entity.status} ? ${#numbers.formatInteger(entity.status,0) == dict.dictValue} : ${dict.default}">
+                    <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                </div>
+            </div>
+            <label class="col-sm-1 control-label">推荐：</label>
+            <div class="col-sm-1">
+                <label class="toggle-switch switch-solid">
+                    <input type="checkbox" id="isBest" th:checked="${entity.isBest == 1 ? true : false}">
+                    <span></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">文章内容：</label>
+            <div class="col-sm-10">
+                <textarea name="content" id="content" style="width:100%;height:400px;">[[*{content}]]</textarea>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-sm-2 control-label">摘要：</label>
+            <div class="col-sm-10">
+                <textarea name="remark" class="form-control" maxlength="500" rows="4">[[*{remark}]]</textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10" style="padding-bottom: 35px">
+        <button type="button" class="btn btn-lg el-primary" onclick="submitHandler()">保 存</button>&nbsp;
+        <button type="button" class="btn btn-lg el-info-plain" onclick="closeItem()">关 闭 </button>
+    </div>
+</div>
+<th:block th:include="admin/include :: footer" />
+<th:block th:include="admin/include :: datetimepicker-js" />
+<th:block th:include="admin/include :: bootstrap-fileinput-js" />
+<th:block th:include="admin/include :: ueditor" />
+
+<script th:inline="javascript">
+    var action = [[${entity.articleId} ? |/edit| : |/add|]];
+    var prefix = ctx + "cms/article";
+    // 表单验证初始化
+    $("#form-article").validate({
+        focusCleanup: true
+    });
+    // 提交保存
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-article").serializeArray();
+            var isBest = $("input[id='isBest']").is(':checked') === true ? 1 : 0;
+            data.push({"name": "isBest", "value": isBest});
+            $.operate.saveTab(prefix + action, data);
+            //$.operate.save(prefix + action, data);
+        }
+    }
+    // 日期控件初始化
+    $("input[name='postTime']").datetimepicker({
+        format: "yyyy-mm-dd HH:ii:ss",
+        minView: "hour",
+        autoclose: true
+    }).val();
+    // 父级树选择
+    function selectColumnTree() {
+        var options = {
+            title: '栏目选择',
+            width: "380",
+            url: ctx + "cms/column" + "/selectColumnTree/" + $("#treeId").val(),
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    // 父级树关闭
+    function doSubmit(index, layero){
+        var body = $.modal.getChildFrame(index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        $.modal.close(index);
+    }
+    var ue = UE.getEditor('content');
+    // 图片上传
+    $("#input-fileupload-image").fileinput({
+        language:'zh',
+        uploadUrl:'/admin/common/upload',
+        maxFileCount: 1,
+        showUpload:true,
+        showPreview:false,
+        dropZoneEnabled:false,
+        maxFileSize:10 * 1024,
+        allowedFileExtensions: ["bmp", "gif", "jpg", "jpeg", "png"]
+    }).on("fileuploaded", function (event, data, previewId, index){
+        //异步上传成功
+        if(data.response.code === 0){
+            $("#images").val(data.response.fileName);
+        }else{
+            $.modal.msgError(data.response.msg)
+        }
+
+    }).on("fileerror",function(event, data, msg){
+        //异步上传错误
+        console.log("fileerror:" + data);
+    });
+    // 附件上传
+    $("#input-fileupload-file").fileinput({
+        language:'zh',
+        uploadUrl:'/admin/common/upload',
+        maxFileCount: 1,
+        showUpload:true,
+        showPreview:false,
+        dropZoneEnabled:false,
+        maxFileSize:50 * 1024,
+        allowedFileExtensions: ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "pdf", "rar", "zip"]
+    }).on("fileuploaded", function (event, data, previewId, index){
+        //异步上传成功
+        if(data.response.code === 0){
+            $("#files").val(data.response.fileName);
+        }else{
+            $.modal.msgError(data.response.msg)
+        }
+
+    }).on("fileerror",function(event, data, msg){
+        //异步上传错误
+        console.log("fileerror:" + data);
+    });
+</script>
+</body>
+</html>

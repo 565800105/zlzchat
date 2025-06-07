@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('开放接口表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+    <style>
+        #sign-group, #authip-group{
+            border: 1px dotted #ccc;
+            padding: 15px 0 10px 0;
+            border-radius: 3px;
+            background-color: #f5f5f5;
+        }
+        #sign-group > label, #sign-group div{margin-bottom: 15px;}
+        .limitgroup, #authip-group{display: none}
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-openApi" th:object="${entity}">
+            <input name="openApiId" th:field="*{openApiId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">API名称：</label>
+                <div class="col-sm-10">
+                    <input name="apiName" th:field="*{apiName}" class="form-control" type="text" maxlength="50" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label is-required">认证方式：</label>
+                <div class="col-sm-5" th:with="type=${@dict.getType('sys_open_api_auth')}">
+                    <label th:each="dict : ${type}" class="check-box">
+                        <input name="authTypeCheckbox" type="checkbox" th:value="${dict.dictValue}" th:text="${dict.dictLabel}"
+                               th:checked="${entity.authType} ? ${#strings.contains(entity.authType, dict.dictValue)} : ${dict.default}" >
+                    </label>
+                </div>
+                <label class="col-sm-2 control-label is-required">状态：</label>
+                <div class="col-sm-3">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${entity.status} ? ${entity.status == dict.dictValue} : ${dict.default}">
+                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="sign-group">
+                <label class="col-sm-2 control-label is-required">APPID：</label>
+                <div class="col-sm-4">
+                    <input name="appId" th:field="*{appId}" class="form-control" type="text" maxlength="50" readonly>
+                </div>
+                <label class="col-sm-3 control-label is-required">超时（分钟）：</label>
+                <div class="col-sm-3">
+                    <input name="overtime" th:field="*{overtime}" class="form-control" type="text" digits="true" maxlength="5" required>
+                </div>
+                <label class="col-sm-2 control-label is-required">密钥Secret：</label>
+                <div class="col-sm-10">
+                    <input name="secret" th:field="*{secret}" class="form-control" type="text" maxlength="50" readonly>
+                </div>
+            </div>
+            <div class="form-group" id="authip-group">
+                <label class="col-sm-2 control-label is-required">授权IP：</label>
+                <div class="col-sm-10">
+                    <textarea name="authIp" class="form-control" maxlength="500" rows="5" placeholder="多段请换行，区间以掩码位&#10;如：192.168.0.1/24 => 192.168.0.1 至 192.168.0.254" required>[[*{authIp}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">请求限制：</label>
+                <div class="col-sm-4">
+                    <select name="limitRequest" id="limitRequest" class="form-control m-b" th:with="type=${@dict.getType('sys_open_api_limit')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${entity.limitRequest} ? ${entity.limitRequest == dict.dictValue} : ${dict.default}"></option>
+                    </select>
+                </div>
+                <label class="col-sm-2 control-label limitgroup">限制次数：</label>
+                <div class="col-sm-4 limitgroup">
+                    <input name="limitTimes" th:field="*{limitTimes}" class="form-control" type="text" digits="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="remark" class="form-control" maxlength="500" rows="3">[[*{remark}]]</textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.openApiId} ? |/edit| : |/add|]];
+        var prefix = ctx + "tool/openApi";
+        // 表单验证初始化
+        $("#form-openApi").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                let datas = $('#form-openApi').serializeArray(), authType = "",
+                    authTypeArray = datas.filter(item => item.name === 'authTypeCheckbox'),
+                    dataArray = datas.filter(item => item.name !== 'authTypeCheckbox');
+                if(authTypeArray.length == 0){
+                    $.modal.alertWarning("请选择认证方式！");
+                    return false;
+                }else{
+                    // 认证方式值以 , 存储
+                    authTypeArray.forEach((item, index, array) => {
+                        authType += item.value;
+                        if(index < (authTypeArray.length - 1)){
+                            authType += ',';
+                        }
+                    })
+                    dataArray.push({name: 'authType', value: authType});
+                }
+
+                console.log(dataArray)
+
+                //console.log("form-serialize：" + $('#form-openApi').serialize())
+                //$.operate.save(prefix + action, $('#form-openApi').serialize());
+            }
+        }
+
+        // 认证方式选择事件
+        $('input[name=authTypeCheckbox]').on('ifChecked ifUnchecked', function (e) {
+            let type = $(e.target).val(), selected = $(e.target).is(':checked');
+            if(type === 'sign' && selected){
+                cancelAuthTypeCheckbox(0);
+                $('#sign-group').show();
+            }else if(type === 'sign' && !selected){
+                $('#sign-group').hide();
+            }else if(type === 'authip' && selected){
+                cancelAuthTypeCheckbox(0);
+                $('#authip-group').show();
+            }else if(type === 'authip' && !selected){
+                $('#authip-group').hide();
+            }else if(type === 'none' && selected){
+                cancelAuthTypeCheckbox(1);
+                cancelAuthTypeCheckbox(2);
+                $('#sign-group, #authip-group').hide();
+            }
+        });
+        
+        function cancelAuthTypeCheckbox(index) {
+            $('input[name=authTypeCheckbox]').eq(index).prop('checked', false);
+            $('input[name=authTypeCheckbox]').eq(index).parent().removeClass('checked');
+        }
+        // 请求限制事件
+        $('#limitRequest').select2({
+            minimumResultsForSearch: -1
+        })
+        $('#limitRequest').on('select2:select', function (e) {
+            console.log(e.params.data.id)
+        });
+
+    </script>
+</body>
+</html>

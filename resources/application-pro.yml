@@ -1,0 +1,38 @@
+# 生产（正式）环境
+server:
+  port: ${SERVICE_PORT}
+jdsoft:
+  demoEnabled: false
+  # 文件路径 示例（ Windows配置D:/www/wwwroot/uploadPath，Linux配置 /www/wwwroot/uploadPath）
+  profile: ${PROFILE}
+swagger:
+  enabled: false
+knife4j:
+  enable: false
+  basic:
+    enable: false
+    username: jd
+    password: jiedian@tec
+# 微信配置
+spring:
+  datasource:
+    druid:
+    # 主库数据源
+      master:
+        #driverClassName: dm.jdbc.driver.DmDriver
+        #url: jdbc:dm://127.0.0.1:5236?schema=JDSOFT1&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=true&characterEncoding=UTF-8
+        url: ${MYSQL_URL}
+        username: ${MYSQL_NAME}
+        password: ${MYSQL_PWD}
+  redis:
+    database: 1
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+#  groovy:
+#    template:
+#      configuration:
+#        resource-loader-path: file:./templates/
+#  thymeleaf:
+#    prefix: file:./templates/
+#    cache: false

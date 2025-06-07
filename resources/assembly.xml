@@ -1,0 +1,32 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0
+                      http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>unzip</id>
+    <formats>
+        <!-- 可以根据自己的需求定义压缩文件的格式 -->
+        <format>zip</format>
+    </formats>
+    <!-- 不包含根目录，如果为true，生成的压缩文件会有一个根目录 -->
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <!-- 指定需要压缩的文件清单 -->
+    <fileSets>
+        <fileSet>
+            <!-- 指定你需要压缩的文件目录 -->
+            <directory>${project.build.directory}/lib/</directory>
+            <!-- 指定压缩后的文件目录 -->
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/resources/</directory>
+            <outputDirectory>resources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>./</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('订阅源分类详细表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-classificationdetail" th:object="${entity}">
+            <input name="classificationId" th:value="*{classificationId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">公众号：</label>
+                <div class="col-sm-8">
+                    <select id="remark" name="remark" class="form-control select2-multiple" multiple>
+                        <option th:each="feed:${feeds}" th:value="${feed.wxsId}" th:text="${feed.mpName}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.classificationDetaiId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/classificationdetail";
+        // 表单验证初始化
+        $("#form-classificationdetail").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-classificationdetail').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>主题选择</title>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/>
+    <![endif]-->
+    <link rel="shortcut icon" href="../../static/favicon.ico" th:href="@{../../static/favicon.ico}"/>
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/style.min.css}" rel="stylesheet"/>
+	<link th:href="@{/static/css/font-awesome.min.css}" rel="stylesheet"/>
+    <style type="text/css">
+		.list-unstyled{display: flex;justify-content: space-between; flex-wrap: wrap; margin:15px;}
+		.list-unstyled li{width: 33%; padding: 20px 20px 5px 20px;}
+		.list-unstyled a{
+			display: flex;
+			flex-wrap: wrap;
+			border-radius: 4px;
+			overflow: hidden;
+			opacity: 0.9;
+			box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.18);
+		}
+		.list-unstyled a:hover, .list-unstyled .acitve a, .list-unstyled a:hover i, .list-unstyled .active i{
+			opacity: 1;
+		}
+		.list-unstyled p{ margin: 10px 0;}
+		.list-unstyled i{
+			opacity: 0;
+			display: block;
+			margin: 25px 35px;
+			font-size: 24px;
+			color: rgba(0,0,0,0.65);
+		}
+
+	</style>
+</head>
+<body class="gray-bg">
+<ul class="list-unstyled clearfix">
+	<li>
+		<a href="javascript:" data-skin="skin-blue|theme-dark" class="clearfix">
+			<span style="width: 20%; height: 13px; background: #333744"></span>
+			<span style="width: 80%; height: 13px; background: #ffffff"></span>
+			<span style="width: 20%; height: 80px; background: #333744">
+				<span style="height: 10px;background: #1890ff;display:block;margin-top: 13px;"></span>
+			</span>
+			<span style="width: 80%; float: left; height: 80px; background: #f0f2f5">
+				<i class="fa fa-check"></i>
+			</span>
+		</a>
+		<p class="text-center">暗黑蓝</p>
+	</li>
+	<li>
+		<a href="javascript:" data-skin="skin-green|theme-dark" class="clearfix">
+			<span style="width: 20%; height: 13px; background: #333744"></span>
+			<span style="width: 80%; height: 13px; background: #ffffff"></span>
+			<span style="width: 20%; height: 80px; background: #333744">
+				<span style="height: 10px; background: #52c41a;display:block;margin-top: 13px;"></span>
+			</span>
+			<span style="width: 80%; height: 80px; background: #f0f2f5"><i class="fa fa-check"></i></span>
+		</a>
+		<p class="text-center">暗黑绿</p>
+	</li>
+	<li>
+		<a href="javascript:" data-skin="skin-purple|theme-dark" class="clearfix">
+			<span style="width: 20%; height: 13px; background: #333744"></span>
+			<span style="width: 80%; height: 13px; background: #ffffff"></span>
+			<span style="width: 20%; height: 80px; background: #333744">
+				<span style="height: 10px;background: #722ed1;display:block;margin-top: 13px;"></span>
+			</span>
+			<span style="width: 80%; height: 80px; background: #f0f2f5"><i class="fa fa-check"></i></span>
+		</a>
+		<p class="text-center">暗黑紫</p>
+	</li>
+	<li>
+		<a href="javascript:" data-skin="skin-blue|theme-light" class="clearfix">
+			<span style="width: 20%; height: 13px; background: #1890ff"></span>
+			<span style="width: 80%; height: 13px; background: #1890ff">
+				<span style="width:22px;height: 13px;background: #1681e5;display:block;"></span>
+			</span>
+			<span style="width: 20%; height: 80px; background: #ffffff"></span>
+			<span style="width: 80%; height: 80px; background: #f0f2f5"><i class="fa fa-check"></i></span>
+		</a>
+		<p class="text-center">浅色蓝</p>
+	</li>
+
+	<li>
+		<a href="javascript:" data-skin="skin-green|theme-light" class="clearfix">
+			<span style="width: 20%; height: 13px; background: #52c41a"></span>
+			<span style="width: 80%; height: 13px; background: #52c41a">
+				<span style="width:22px;height: 13px;background: #4ab017;display:block;"></span>
+			</span>
+			<span style="width: 20%; height: 80px; background: #ffffff"></span>
+			<span style="width: 80%; height: 80px; background: #f0f2f5"><i class="fa fa-check"></i></span>
+		</a>
+		<p class="text-center">浅色绿</p>
+	</li>
+
+	<li>
+		<a href="javascript:" data-skin="skin-purple|theme-light"  class="clearfix">
+			<span style="width: 20%; height: 13px; background: #722ed1"></span>
+			<span style="width: 80%; height: 13px; background: #722ed1">
+				<span style="width:22px;height: 13px;background: #6629bc;display:block;"></span>
+			</span>
+			<span style="width: 20%; height: 80px; background: #ffffff"></span>
+			<span style="width: 80%; height: 80px; background: #f0f2f5"><i class="fa fa-check"></i></span>
+		</a>
+		<p class="text-center">浅色紫</p>
+	</li>
+</ul>
+</body>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/zzp/js/common.js?v=4.7.8}"></script>
+<script type="text/javascript">
+//皮肤样式列表
+var skins = ["skin-blue", "skin-green", "skin-purple", "skin-red", "skin-yellow"];
+
+// 主题样式列表
+var themes = ["theme-dark", "theme-light", "theme-blue"];
+
+var defaultSkin = 'skin-blue|theme-dark';
+$("[data-skin]").on('click', function(e) {
+    var skin = $(this).data('skin');
+    $.each(skins, function(i) {
+        parent.$("body").removeClass(skins[i]);
+    });
+    $.each(themes, function(i) {
+        parent.$("body").removeClass(themes[i]);
+    });
+    parent.$("body").addClass(skin.split('|')[0]);
+    parent.$("body").addClass(skin.split('|')[1]);
+    storage.set('skin', skin);
+	setActive();
+});
+function setActive(){
+	let skin = storage.get('skin');
+	$("[data-skin]").each(function (i, e) {
+		if($(this).attr('data-skin') == skin){
+			$(this).parent().addClass('active');
+		}else{
+			$(this).parent().removeClass('active');
+		}
+	})
+}
+$(function () {
+	setActive();
+})
+</script>
+</html>

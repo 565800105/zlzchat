@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${title}]]</title>
+    <meta content="true" name="wechat-enable-text-zoom-em"/>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <link th:href="@{/static/css/editor.css}" rel="stylesheet"/>
+</head>
+<body class="view" contenteditable="true" spellcheck="false" style="cursor: text;">
+    <div style="max-width:600px;margin:0 auto;" th:utext="${htmlContent}">
+
+    </div>
+</body>
+</html>

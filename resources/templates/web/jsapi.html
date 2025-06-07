@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>微信jsapi签名</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,target-densitydpi=device-dpi">
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script th:src="@{/static/js/jquery.min.js}"></script>
+</head>
+<body>
+    <button id="sao">扫码</button>
+    <button id="sign">签名</button>
+    <script th:inline="javascript">
+        $('#sao').click(function () {
+            wx.scanQRCode({
+                needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                success: function (res) {
+                   console.log(res);
+                }
+            })
+        })
+        $('#sign').click(function(){
+            $.ajax({
+                type : "GET",
+                url : "/wechat/mp/getJsSdkSign?url=" + location.href.split('#')[0],
+                success : function(res) {
+                    console.log(res.data)
+                    wxShareConfig(res.data)
+                }
+            });
+        })
+        function wxShareConfig(data){
+            wx.config({
+                debug: false,
+                appId: data.appId,
+                timestamp: data.timestamp,
+                nonceStr: data.nonceStr,
+                signature: data.signature,
+                jsApiList: [
+                    'checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ',
+                    'onMenuShareWeibo',
+                    'scanQRCode'
+                ]
+            });
+
+            wx.ready(function () {
+                alert("wx.config:success")
+            });
+            wx.error(function (res) {
+                // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+                alert("errorMSG:" + res.errMsg);
+            });
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+# 本地开发配置
+spring:
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        #driverClassName: dm.jdbc.driver.DmDriver
+        #url: jdbc:dm://127.0.0.1:5236?schema=JDSOFT1&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=true&characterEncoding=UTF-8
+        url: jdbc:mysql://localhost:3308/gzhweb?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_general_ci&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        username: root
+        password: 123456
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+    password: 123456

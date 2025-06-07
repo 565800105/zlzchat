@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="admin/include :: header('钉钉通讯录')" />
+    <th:block th:include="admin/include :: layout-latest-css" />
+    <th:block th:include="admin/include :: bootstrap-select-css" />
+    <th:block th:include="admin/include :: ztree-css" />
+    <style type="text/css">
+        .fixed-table-pagination{display: none !important;}
+    </style>
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织架构
+            </div>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新部门"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-center" style="background-color: #fff;">
+    <div class="col-sm-12 search-collapse" style="display: none;">
+        <form id="formId">
+            <input type="hidden" id="ddDeptId" name="ddDeptId" value="1">
+        </form>
+    </div>
+    <div class="select-list" id="toolbar" role="group">
+        <ul>
+            <li>
+                <div style="display: inline-block;">
+                    <select class="form-control noselect2 selectpicker" id="deptId"></select>
+                </div>
+            </li>
+            <li>
+                <div style="display: inline-block;">
+                    <select id="typeId" th:with="type=${@dict.getType('sys_member_type')}" class="form-control noselect2 selectpicker">
+                        <option value="0">选择导入类型</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="col-sm-12">
+        <table id="bootstrap-table"></table>
+    </div>
+</div>
+<th:block th:include="admin/include :: footer" />
+<th:block th:include="admin/include :: layout-latest-js" />
+<th:block th:include="admin/include :: bootstrap-select-js" />
+<th:block th:include="admin/include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/member";
+    var deptId = [[${deptId}]], type = [[${type}]];
+    $(function() {
+        let panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 200 });
+        queryDeptTree();// 钉钉组织架构
+
+        // 人员列表
+        $.table.init({
+            url: prefix + "/ddUserList",
+            modalName: "钉钉用户",
+            showSearch:false,
+            showFooter:false,
+            showToggle:false,
+            clickToSelect:true,
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: 'userid',
+                    title: '用户id',
+                    visible: false
+                },
+                {
+                    field: 'unionid',
+                    title: 'unionid',
+                    visible: false
+                },
+                {
+                    field: 'avatar',
+                    title: '头像',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(value, 500,500);
+                    }
+                },
+                {
+                    field: 'name',
+                    title: '姓名',
+                },
+                {
+                    field: 'mobile',
+                    title: '手机号'
+                }]
+        });
+        //加载部门
+        $.ajax({
+            url: ctx + "system/dept/treeData",
+            type: 'get',
+            dataType: 'json',
+            success: function(data) {
+                let rootId = data.find( o => o.pId === 0).id;
+                let selectHtml = '<option value="0">选择导入部门</option>';
+                data.filter(o => o.pId === rootId).forEach(g => {
+                    selectHtml += '<optgroup label="&#45;&#45;'+ g.title +'&#45;&#45;">';
+                    data.filter(o => o.pId === g.id).forEach(d => {
+                        selectHtml += '<option value="'+ d.id +'">'+d.title+'</option>';
+                    })
+                    selectHtml += '</optgroup>';
+                });
+                $('#deptId').html(selectHtml);
+                $('#deptId').selectpicker('refresh');
+            }
+        });
+
+    })
+    
+    // 钉钉组织架构
+    function queryDeptTree() {
+        $.tree.init({
+            url: prefix + "/ddDepList",
+            expandLevel: 2,
+            onClick : function (event, treeId, treeNode) {
+                $("#ddDeptId").val(treeNode.id);
+                $.table.search();
+            }
+        });
+    }
+
+    // 钉钉组织架构 刷新
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+    // 确定导入
+    function submitHandler() {
+        table.set();
+        let deptId = parseInt($('#deptId').val()), typeId = parseInt($('#typeId').val());
+        let userIds = $.table.selectColumns("userid"), unionids = $.table.selectColumns("unionid"), names = $.table.selectColumns("name"), mobiles = $.table.selectColumns("mobile"), avatars = $.table.selectColumns("avatar");
+        if(userIds.length === 0 || names.length === 0 || mobiles.length === 0){
+            $.modal.alertWarning("请至少选择一条记录！");
+            return;
+        }
+        if(deptId === 0 || typeId === 0){
+            $.modal.alertWarning("请选择导入部门、用户类型！");
+            return;
+        }
+
+        let data = [];
+        for(let i = 0; i < userIds.length; i++)
+            data.push({ddUserid : userIds[i], unionid: unionids[i], nickName:names[i], phone: mobiles[i], userName: mobiles[i], avatar: avatars[i], deptId: deptId, typeId: typeId});
+
+        $.ajax({
+            url: prefix + '/ddUserImport',
+            type: "post",
+            dataType: "json",
+            contentType: 'application/json;',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍候...");
+            },
+            success: function(result) {
+                $.modal.closeLoading();
+                if (result.code == web_status.SUCCESS) {
+                    var parent = window.parent;
+                    $.modal.close();
+                    parent.$.modal.msgSuccess(result.msg);
+                    parent.$.table.refresh();
+                }else{
+                    $.modal.alertError(result.msg);
+                }
+            }
+        })
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+.logo-lg {
+    display: block;
+    background: url("../img/logo-white.png") no-repeat center center;
+    height: 50px;
+    background-size: 76% auto;
+}

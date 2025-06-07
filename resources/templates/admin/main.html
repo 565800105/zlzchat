@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>主页</title>
+    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/main/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/main/style.min862f.css}" rel="stylesheet"/>
+	<style>
+		body{color: #454545;}
+		h2{margin-bottom: 20px;}
+		p{line-height: 30px;color: #888;margin: 10px auto}
+		.business{display: flex;flex-wrap: wrap;margin: 30px 0;}
+		.business img{margin-right: 20px;}
+		.business div{line-height:24px;color:#888;font-size: 12px; min-width: 150px}
+		.business b{font-size: 16px;display: block;color: #454545;padding:5px 0}
+
+		ol>li{line-height: 26px;font-size: 14px;color: #666}
+		@media screen and (max-width:1100px) {
+			.business{margin: 10px 0;}
+		}
+	</style>
+</head>
+
+<body class="gray-bg">
+	<p>欢迎登陆！当前更新版本：2025-06-07版本</p>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('表单汇总')" />
+</head>
+<body class="white-bg">
+<div class="wrapper-content" id="vueApp">
+    <el-empty description="正在建设中"></el-empty>
+</div>
+<th:block th:include="admin/include :: footer" />
+<th:block th:include="admin/include :: element-ui" />
+<script th:inline="javascript">
+    var vueApp = new Vue({
+        el: '#vueApp',
+        data(){
+            return{}
+        },
+        created() {},
+        mounted() {},
+        methods:{}
+    })
+</script>
+</body>
+</html>

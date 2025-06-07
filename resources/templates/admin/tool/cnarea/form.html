@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('中国行政地区表单')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-cnarea" th:object="${entity}">
+            <input name="areaId" th:field="*{areaId}" type="hidden">
+            <input name="parentCode" th:field="*{parentCode}" type="hidden">
+            <input name="level" th:field="*{level}" type="hidden">
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">父级地区：</label>
+                    <div class="col-sm-7">
+                        <input name="parentName" th:value="${parentName}" class="form-control" type="text" readonly required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">名称：</label>
+                    <div class="col-sm-7">
+                        <input name="name" th:field="*{name}" class="form-control" type="text" required maxlength="50">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">邮政编码：</label>
+                    <div class="col-sm-7">
+                        <input name="zipCode" th:field="*{zipCode}" class="form-control" type="text" digits="true">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">组合名：</label>
+                    <div class="col-sm-7">
+                        <input name="mergerName" th:field="*{mergerName}" class="form-control" type="text" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">经度：</label>
+                    <div class="col-sm-7">
+                        <input name="lng" th:field="*{lng}" class="form-control" type="text" number="true">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">行政代码：</label>
+                    <div class="col-sm-7">
+                        <input name="areaCode" th:field="*{areaCode}" class="form-control" type="text" required digits="true">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">简称：</label>
+                    <div class="col-sm-7">
+                        <input name="shortName" th:field="*{shortName}" class="form-control" type="text" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">区号：</label>
+                    <div class="col-sm-7">
+                        <input name="cityCode" th:field="*{cityCode}" class="form-control" type="text" maxlength="6">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">拼音：</label>
+                    <div class="col-sm-7">
+                        <input name="pinyin" th:field="*{pinyin}" class="form-control" type="text" maxlength="30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">纬度：</label>
+                    <div class="col-sm-7">
+                        <input name="lat" th:field="*{lat}" class="form-control" type="text" number="true">
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <script th:inline="javascript">
+        var action = [[${entity.areaId} ? |/edit| : |/add|]];
+        var prefix = ctx + "tool/cnarea";
+        // 表单验证初始化
+        $("#form-cnarea").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + action, $('#form-cnarea').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

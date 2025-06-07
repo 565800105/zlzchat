@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500-操作异常</title>
+	<link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/style.min.css}" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+    <div class="middle-box text-center animated fadeInDown">
+        <h3 class="font-bold">操作异常！</h3>
+        <div class="error-desc">
+            [[${errorMessage}]]
+        </div>
+    </div>
+</body>
+</html>

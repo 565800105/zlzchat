@@ -1,0 +1,6 @@
+Application Version: ${jdsoft.version}
+Spring Boot Version: ${spring-boot.version}
+////////////////////////////////////////////
+//                                        //
+//                                        //
+////////////////////////////////////////////

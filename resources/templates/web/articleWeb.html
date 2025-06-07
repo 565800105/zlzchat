@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>公众号管理</title>
+  <meta content="true" name="wechat-enable-text-zoom-em"/>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <link th:href="@{/static/css/editor.css}" rel="stylesheet"/>
+    <link th:href="@{/static/js/viewer.min.css}" rel="stylesheet"/>
+  <th:block th:include="admin/include :: element-css" />
+  <style>
+    [v-cloak]{
+      display: none;
+    }
+    body{
+      min-width: 1200px!important;
+    }
+    .el-col {
+      border-radius: 4px;
+    }
+    .bg-purple-dark {
+      background: #99a9bf;
+    }
+    .bg-purple {
+      background: #d3dce6;
+    }
+    .bg-purple-light {
+      background: #e5e9f2;
+    }
+    .grid-content {
+      border-radius: 4px;
+      min-height: 36px;
+    }
+    .container {
+      display: flex;
+      align-items: center;     /* 垂直居中 */
+      height: 200px;           /* 设置父容器的高度 */
+    }
+    .gzhImg{
+      width: 20%;
+    }
+
+
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 5px 0;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      height: 40px;  /* 调整高度 */
+      overflow: hidden; /* 防止超出内容 */
+    }
+
+    .avatar {
+      margin-right: 10px;
+    }
+
+    .name {
+      font-size: 18px;
+      white-space: nowrap; /* 防止文字换行 */
+      overflow: hidden; /* 隐藏超出的内容 */
+      text-overflow: ellipsis; /* 使用省略号显示超出的部分 */
+      max-width: 200px; /* 限制最大宽度 */
+    }
+
+    .list-item:hover {
+      background-color: #e2eefe; /* 背景色变为蓝色 */
+    }
+
+    .list-item:hover .name {
+      color: #0956ec; /* 背景变为蓝色时，文字颜色变为较深蓝色 */
+    }
+    .highlight {
+      background-color: #e2eefe; /* 点击项保持蓝色背景 */
+      color: #0956ec; /* 点击项文字颜色变为深蓝色 */
+    }
+    .list-card{
+      margin-top: 10px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto; /* 启用垂直滚动条 */
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 当滚动时，滚动条变为可见 */
+    .list-card::-webkit-scrollbar {
+      width: 8px; /* 设置滚动条的宽度 */
+    }
+
+    .list-card::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2); /* 设置滚动条的颜色 */
+      border-radius: 10px; /* 设置滚动条的圆角 */
+      transition: background-color 0.3s ease;
+    }
+
+    /* 滚动条在鼠标悬停时的变化效果 */
+    .list-card::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.5); /* 鼠标悬停时滚动条变得更加明显 */
+    }
+
+    /* 不滚动时，隐藏滚动条 */
+    .list-card::-webkit-scrollbar {
+      display: none;
+    }
+
+    .list-card:hover::-webkit-scrollbar {
+      display: block;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      margin: 5px 0;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
+    .el-card__body{
+      padding: 0!important;
+      min-height: calc(100vh - 100px);
+    }
+
+    .article-card {
+      cursor:pointer;
+      width: 90%;
+      height: 320px; /* 固定高度 */
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cover-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .article-content {
+      flex: 1; /* 确保文章内容区占满剩余空间 */
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .article-title {
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.4;
+      margin: 10px 0;
+      white-space: normal; /* 允许换行 */
+      overflow: hidden; /* 超出部分隐藏 */
+      text-overflow: ellipsis; /* 超出部分显示省略号 */
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* 限制显示2行 */
+      -webkit-box-orient: vertical;
+    }
+
+    .article-meta {
+      font-size: 14px;
+      color: #666;
+      margin-top: auto; /* 保证作者和时间在底部 */
+    }
+
+    .author {
+      margin-right: 10px;
+    }
+
+    .date {
+      margin-left: 10px;
+    }
+
+    /* 分页样式 */
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+    img{
+        max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+ <div id="app" style="min-width: 1200px;" v-cloak>
+
+     <el-dialog
+             title="全文"
+             :visible.sync="contentDialogVisible"
+             width="650px"
+             height="500"
+             custom-class="abolishDialog"
+     >
+         <div
+               class="image-container"
+                 style="width: 100%;"
+                 v-html="content"
+         ></div>
+
+     </el-dialog>
+
+   <el-row :gutter="10" >
+<!--     <el-col :span="4">-->
+
+<!--         <div class="grid-content">-->
+<!--           <el-button type="primary">添加公众号</el-button>-->
+
+<!--         </div>-->
+
+
+<!--       <el-card class="list-card">-->
+<!--         <el-input v-model="searchGZH" @input="filterItems" placeholder="搜索公众号" ></el-input>-->
+<!--       <div-->
+<!--               class="list-item"-->
+<!--               v-for="(item, index) in filteredItems"-->
+<!--               :key="index"-->
+<!--               @mouseover="hover = index"-->
+<!--               @mouseleave="hover = null"-->
+<!--               @click="handleClick(index)"-->
+<!--               :class="{'highlight': clickedIndex === index}"-->
+<!--       >-->
+<!--         <el-avatar :src="item.avatar" :size="50" class="avatar"></el-avatar>-->
+<!--         <span :style="getTextStyle(index)" class="name">{{ item.name }}</span>-->
+<!--       </div>-->
+<!--         <el-empty v-if="filteredItems.length<=0" description="暂无公众号"></el-empty>-->
+<!--       </el-card>-->
+
+<!--     </el-col>-->
+
+     <el-col :span="24" >
+       <el-col :span="24" style="margin-bottom: 10px;">
+         <p style="text-align: center;font-weight: bold;font-size: 24px;">公众号信息管理平台</p>
+       <el-input v-model="searchTitle" placeholder="请输入标题" style="width: 200px;"></el-input>
+         <el-date-picker
+                 v-model="searchTime"
+                 type="daterange"
+                 format="yyyy-MM-dd"
+                 value-format="yyyy-MM-dd"
+                 range-separator="至"
+                 start-placeholder="开始日期"
+                 end-placeholder="结束日期">
+         </el-date-picker>
+         <el-button type="primary" @click="searchArticle()">搜索</el-button>
+     </el-col>
+
+       <el-col :span="6" v-for="(article, index) in articles" :key="index">
+         <el-card class="article-card" >
+           <!-- 封面图 -->
+             <div @click="showContent(article.articlesId)">
+           <el-image
+                   class="cover-image"
+                   :src="article.picUrl"></el-image>
+           <div class="article-content" >
+             <!-- 文章标题 -->
+             <h3 class="article-title">{{ article.title }}</h3>
+             <!-- 文章作者与时间 -->
+             <div class="article-meta">
+               <span class="author">作者: {{ article.mpName }}</span>
+               <span class="date">发布时间: {{ article.publishTime }}</span>
+             </div>
+           </div>
+             </div>
+         </el-card>
+       </el-col>
+
+       <el-col :span="24">
+       <el-pagination
+               @size-change="handleSizeChange"
+               @current-change="handleCurrentChange"
+               :current-page="currentPage"
+               :page-sizes="[8, 20, 30, 40]"
+               :page-size="pageSize"
+               layout="total, sizes, prev, pager, next, jumper"
+               :total="total"
+               class="pagination">
+       </el-pagination>
+       </el-col>
+     </el-col>
+
+
+
+   </el-row>
+
+
+
+
+ </div>
+
+</body>
+<script th:src="@{/static/js/jquery.min.js?v=3.7.1}"></script>
+<script th:src="@{/static/js/viewer.min.js}"></script>
+<th:block th:include="admin/include :: element-js" />
+<script th:inline="javascript">
+
+  var app = new Vue({
+    el:'#app',
+    data:function () {
+      return {
+        searchGZH:"",
+        filteredItems: [], // 存储过滤后的结果
+        contentDialogVisible:false,
+        currentPage: 1,
+        pageSize: 8,
+        content: "",
+        searchTitle:"",
+        searchTime: "",
+        total: 0,
+        hover: null, // 用于记录当前鼠标悬停的列表项
+        clickedIndex: null, // 用于记录被点击的列表项
+        items: [],
+        articles: [],
+          viewer:null,
+      }
+    },
+    created() {
+      this.filteredItems = this.items;
+      var data=[[${data}]];
+      this.total=data.total;
+      this.articles=data.rows;
+    },
+    methods: {
+      handleClick(index) {
+        this.clickedIndex = index; // 设置点击项的索引
+      },
+      getTextStyle(index) {
+        return {
+          color: this.hover === index || this.clickedIndex === index ? '#0956ec' : 'black', // 鼠标悬停时改变文字颜色
+        };
+      },
+      filterItems() {
+        if (this.searchGZH) {
+          this.filteredItems = this.items.filter(item =>
+                  item.name.toLowerCase().includes(this.searchGZH.toLowerCase()));
+        } else {
+          this.filteredItems = this.items; // 如果没有输入内容，显示所有项
+        }
+      },
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.getArticleList();
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getArticleList();
+      },
+      getArticleList(){
+        let that=this;
+        $.ajax({
+          type : "post",
+          url : "/getArticleList?wxsId="+[[${wxsId}]]+"&pageNum="+that.currentPage+"&pageSize="+that.pageSize+"&title="+that.searchTitle+"&beginTime="+(that.searchTime?that.searchTime[0]:"")+"&endTime="+(that.searchTime?that.searchTime[1]:""),
+          success : function(res) {
+
+            that.articles=res.rows;
+            that.total=res.total;
+
+          }
+        });
+      },
+      searchArticle(){
+        this.currentPage=1;
+        this.getArticleList();
+      }
+      ,showContent(articlesId){
+        this.contentDialogVisible=true;
+        let that=this;
+            $.ajax({
+                type : "post",
+                url : "/getArticleDetail?articlesId="+articlesId,
+                success : function(res) {
+                    that.content=res.data.content;
+
+                    setTimeout(function(){
+                        that.$nextTick(() => {
+                        // 获取包含图片的父容器
+                        const imageContainer = document.querySelector('.image-container');
+
+                        // 获取所有图片元素
+                        const images = imageContainer.querySelectorAll('img:not(svg img)');
+
+                            const filteredImages = Array.from(images).filter(image => {
+                                // 获取 data-w 属性值，并确保它大于 600
+                                const dataW = parseInt(image.getAttribute('data-w'), 10);
+                                return dataW >= 600; // 只保留 data-w > 600 的图片
+                            });
+                            if (that.viewer!=null) {
+                                that.viewer.destroy();
+                                that.viewer=null;
+                            }
+
+                        // 绑定点击事件到每个图片
+                            filteredImages.forEach(image => {
+                            image.addEventListener('click', (e) => {
+                                if (that.viewer==null) {
+
+                                    // 初始化 Viewer.js 预览
+                                    const viewer = new Viewer(imageContainer, {
+                                        // 设置点击时展开的图片
+                                        selectedIndex: Array.from(images).indexOf(e.target)
+                                    });
+                                    that.viewer=viewer;
+                                    viewer.show(); // 显示预览
+                                }
+
+                            });
+                        });
+                      });
+                    }, 50); // 延迟 3000 毫秒，即 3 秒
+
+                    // 查找页面上所有的 video 元素
+                    const videos = that.$el.querySelectorAll('video');
+
+                    // 遍历所有 video 元素，并移除 autoplay 属性
+                    videos.forEach(video => {
+                        video.autoplay = false;  // 确保视频不自动播放
+                    });
+
+                }
+            });
+
+      }
+
+    }
+  })
+</script>
+</html>

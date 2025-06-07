@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="admin/include :: header('开放接口列表')" />
+    <th:block th:include="admin/include :: select2-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>API名称：</label>
+                                <input type="text" name="apiName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="tool:openApi:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="tool:openApi:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="tool:openApi:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="tool:openApi:import">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="tool:openApi:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('tool:openApi:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('tool:openApi:remove')}]];
+        var authTypeDatas = [[${@dict.getType('sys_open_api_auth')}]];
+        var limitRequestDatas = [[${@dict.getType('sys_open_api_limit')}]];
+        var statusDatas = [[${@dict.getType('sys_normal_disable')}]];
+        var prefix = ctx + "tool/openApi";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                importUrl: prefix + "/importData",
+                importTemplateUrl: prefix + "/importTemplate",
+                modalName: "开放接口",
+                columns: [
+                    {
+                        checkbox: true
+                    },
+                    {
+                        field: 'openApiId',
+                        title: 'APIID',
+                        visible: false
+                    },
+                    {
+                        field: 'apiName',
+                        title: 'API名称'
+                    },
+                    {
+                        field: 'authType',
+                        title: '认证方式',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabels(authTypeDatas, value);
+                        }
+                    },
+                    {
+                        field: 'appId',
+                        title: '唯一标识'
+                    },
+                    {
+                        field: 'secret',
+                        title: '密钥'
+                    },
+                    {
+                        field: 'overtime',
+                        title: '签名超时'
+                    },
+                    {
+                        field: 'authIp',
+                        title: '授权IP'
+                    },
+                    {
+                        field: 'limitRequest',
+                        title: '请求限制',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(limitRequestDatas, value);
+                        }
+                    },
+                    {
+                        field: 'limitTimes',
+                        title: '限制次数'
+                    },
+                    {
+                        field: 'status',
+                        title: '状态',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(statusDatas, value);
+                        }
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.openApiId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.openApiId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            return actions.join('');
+                        }
+                    }
+                ]
+            };
+            $.table.init(options);
+        });
+    </script>
+    <!-- 导入区域 -->
+    <script id="importTpl" type="text/template">
+     <form enctype="multipart/form-data" class="mt20 mb10">
+         <div class="col-xs-offset-1">
+             <input type="file" id="file" name="file"/>
+             <div class="mt10 pt5">
+                 <input type="checkbox" id="updateSupport" name="updateSupport" title="如果数据已经存在，更新这条数据。"> 是否更新已经存在的数据
+                 &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+             </div>
+             <font color="red" class="pull-left mt10">
+                 提示：仅允许导入“xls”或“xlsx”格式文件！
+             </font>
+         </div>
+     </form>
+    </script>
+</body>
+</html>

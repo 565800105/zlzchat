@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('抖音用户表单')" />
+    <th:block th:include="admin/include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-tiktokuser" >
+            <input name="userId"  type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">地址id：</label>
+                <div class="col-sm-8">
+                         <textarea required name="urlParam" id="urlParam" rows="5" class="form-control" ></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="admin/include :: footer" />
+    <th:block th:include="admin/include :: select2-js" />
+    <script th:inline="javascript">
+        var action = [[${entity.userId} ? |/edit| : |/add|]];
+        var prefix = ctx + "cms/tiktokuser";
+        // 表单验证初始化
+        $("#form-tiktokuser").validate({
+            focusCleanup: true
+        });
+        // 提交保存
+        function submitHandler() {
+            if ($.validate.form()) {
+                var urlParam= $('#urlParam').val();
+                $.ajax({
+                    url: prefix + "/getTiktokInfo",
+                    type: 'post',
+                    dataType: 'json',
+                    data: { "urlParam": urlParam },
+                    success: function(result) {
+
+                    }
+                })
+                $.modal.close();
+                $.modal.msgSuccess('已发起！');
+            }
+        }
+    </script>
+</body>
+</html>

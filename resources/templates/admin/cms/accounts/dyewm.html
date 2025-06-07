@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('用户登录信息表单')" />
+</head>
+<body class="white-bg">
+<img style="width:250px;" th:src="${url}"></img>
+</body>
+<th:block th:include="admin/include :: footer" />
+<script th:inline="javascript">
+    $(function() {
+        let token=[[${token}]];
+
+
+
+      // var  interval= setInterval(function() {
+      //       $.ajax({
+      //           url: "/admin/cms/accounts/dyCheck?token="+token,
+      //           type: 'post',
+      //           success: function(result) {
+      //               if(result.data.sta==false){
+      //                   if(result.data.data.status=="expired"){
+      //                       //更换token
+      //                       token=result.data.data.token;
+      //                   }
+      //               }else  if(result.data.sta==true){
+      //                   var parent = activeWindow();
+      //                   parent.$.table.refresh();
+      //                   $.modal.close();
+      //               }
+      //           }
+      //       });
+      //   }, 2000); // 2000毫秒 = 2秒
+    })
+</script>
+
+</html>

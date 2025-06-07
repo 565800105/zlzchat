@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="admin/include :: header('用户登录信息表单')" />
+</head>
+<body class="white-bg">
+<img th:src="${url}" style="width:180px;"></img>
+</body>
+<th:block th:include="admin/include :: footer" />
+<script th:src="@{/static/js/jquery.qrcode.min.js}"></script>
+<script th:inline="javascript">
+    $(function() {
+        // jQuery('#qrcode').qrcode([[${url}]]);
+
+        $.ajax({
+            url: "/admin/cms/accounts/ewmCallback",
+            type: 'get',
+            data: {
+                "uid": [[${uid}]],
+                "installId":[[${installId}]]
+            },
+            success: function(result) {
+                $.modal.msgSuccessReload("操作成功");
+                var parent = activeWindow();
+                parent.$.table.refresh();
+                $.modal.close();
+            }
+        })
+
+
+    })
+</script>
+</html>
