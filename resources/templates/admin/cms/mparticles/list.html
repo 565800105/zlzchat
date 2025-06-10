@@ -5,6 +5,7 @@
     <th:block th:include="admin/include :: select2-css" />
     <th:block th:include="admin/include :: layout-latest-css" />
     <th:block th:include="admin/include :: ztree-css" />
+    <th:block th:include="admin/include :: element-css" />
     <style>
 
      .ico_docu{
@@ -35,6 +36,9 @@
       .root_docu{
           display: none!important;
       }
+      #toolbar{
+          display: none;
+      }
     </style>
 </head>
 <body class="gray-bg">
@@ -57,7 +61,7 @@
 </div>
 
 <div class="ui-layout-center">
-     <div class="container-div" >
+     <div class="container-div"  id="app">
         <div class="row">
             <div class="col-sm-12 search-collapse">
                 <form id="formId">
@@ -70,7 +74,7 @@
                             </li>
                             <li>
                                 <a class="btn el-primary" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                <a class="btn el-info-plain" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <a class="btn el-info-plain" onclick="reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                             </li>
                         </ul>
                     </div>
@@ -78,7 +82,12 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-
+                <a class="btn el-primary" onclick="getFeedArticleNew()" shiro:hasPermission="cms:accounts:add">
+                    <i class="fa fa-plus"></i> 最新拉取
+                </a>
+                <a class="btn el-primary" onclick="getFeedArticle()" shiro:hasPermission="cms:accounts:add">
+                    <i class="fa fa-plus"></i> 历史拉取
+                </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -88,6 +97,7 @@
 </div>
     <th:block th:include="admin/include :: footer" />
 <th:block th:include="admin/include :: layout-latest-js" />
+<th:block th:include="admin/include :: element-js" />
     <th:block th:include="admin/include :: select2-js" />
 <th:block th:include="admin/include :: ztree-js" />
     <script th:inline="javascript">
@@ -235,10 +245,14 @@
                 onClick : zOnClick
             };
             $.tree.init(options);
+            $("#wxsId").val("");
 
             function zOnClick(event, treeId, treeNode) {
                 $("#wxsId").val(treeNode.txtId);
+                $("#toolbar").css("display", "block");
+
                 $.table.search();
+
             }
         }
 
@@ -255,7 +269,7 @@
         });
 
         $('#btnRefresh').click(function() {
-            queryDeptTree();
+            reset();
         });
 
         /* 自定义重置-表单重置/隐藏框/树节点选择色/搜索 */
@@ -268,7 +282,88 @@
             $.table.search();
         }
 
+        function reset(){
+            $("#wxsId").val("");
+            $("#toolbar").css("display", "none");
+            $.form.reset();
+            queryDeptTree();
+        }
 
+
+
+        function getFeedArticle(){
+            app.getFeedArticle();
+        }
+
+        function getFeedArticleNew(){
+            app.getFeedArticleNew();
+        }
+
+
+        var app = new Vue({
+            el:'#app',
+            data:function () {
+                return {
+                }
+            },
+            created: function () {
+
+
+            },
+            methods: {
+                getFeedArticle(){
+                    let that=this;
+                    let wxsId= $("#wxsId").val();
+                    const loading =   that.$loading({
+                            lock: true,
+                            text: '发起成功，因历史请求过久，会先退出等待，请刷新文章数量查看是否增加...',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                    setTimeout(() => {
+                        loading.close();
+                    }, 5000);
+                    $.ajax({
+                        url: "/admin/cms/mparticles/getFeedArticle/"+wxsId,
+                        type: 'post',
+                        dataType: "json",
+                        success: function(result) {
+                            if(result.code==0){
+                                $.modal.msgSuccess(result.msg)
+                            }else{
+                                $.modal.msgError(result.msg)
+                            }
+
+                        }
+                    })
+                },
+                getFeedArticleNew(){
+                    let that=this;
+                    let wxsId= $("#wxsId").val();
+                    const loading =   that.$loading({
+                        lock: true,
+                        text: '正在获取最新文章...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    $.ajax({
+                        url: "/admin/cms/mparticles/getFeedArticleNew/"+wxsId,
+                        type: 'post',
+                        dataType: "json",
+                        success: function(result) {
+                            loading.close();
+                            if(result.code==0){
+                                $.modal.msgSuccess(result.msg)
+                            }else{
+                                $.modal.msgError(result.msg)
+                            }
+
+                        }
+                    })
+                }
+
+            }
+        })
 
     </script>
     <!-- 导入区域 -->
