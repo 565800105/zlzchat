@@ -221,7 +221,7 @@
                              actions.push('<a class="btn btn-xs el-primary-text ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.feedId + '\')"> 编辑</a> ');
                             actions.push('<a class="btn btn-xs el-primary-text ' + editFlag + '" href="javascript:void(0)" onclick="getFeedArticleNew(\'' + row.wxsId + '\')"> 最新同步</a> ');
                             actions.push('<a class="btn btn-xs el-primary-text ' + editFlag + '" href="javascript:void(0)" onclick="getFeedArticle(\'' + row.wxsId + '\')"> 历史同步</a> ');
-
+                            actions.push('<a class="btn btn-xs el-danger-text ' + editFlag + '" style="color:red;" href="javascript:void(0)" onclick="deleteFeedArticle(\'' + row.mpName + '\',\'' + row.wxsId + '\')"> 清空文章</a> ');
                             // actions.push('<a class="btn btn-xs el-primary-text ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.feedId + '\')"> 删除</a>');
                             return actions.join('');
                         }
@@ -237,6 +237,13 @@
 
         function getFeedArticleNew(wxsId){
             app.getFeedArticleNew(wxsId);
+        }
+
+        function deleteFeedArticle(mpName,wxsId){
+            $.modal.confirm("确认要清空" + mpName + "文章信息？", function() {
+                app.deleteFeedArticle(wxsId);
+            })
+
         }
 
         function downloadFeedOPML(){
@@ -376,6 +383,29 @@
                     });
                     $.ajax({
                         url: "/admin/cms/mparticles/getFeedArticleNew/"+wxsId,
+                        type: 'post',
+                        dataType: "json",
+                        success: function(result) {
+                            loading.close();
+                            if(result.code==0){
+                                $.modal.msgSuccess(result.msg)
+                            }else{
+                                $.modal.msgError(result.msg)
+                            }
+
+                        }
+                    })
+                },
+                deleteFeedArticle(wxsId){
+                    let that=this;
+                    const loading =  that.$loading({
+                        lock: true,
+                        text: '正在删除，请稍候...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    $.ajax({
+                        url: "/admin/cms/mparticles/deleteFeedArticle/"+wxsId,
                         type: 'post',
                         dataType: "json",
                         success: function(result) {
