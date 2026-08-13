@@ -216,7 +216,10 @@
                     },
                     {
                         field: 'title',
-                        title: '标题'
+                        title: '标题',
+                        formatter: function(value, row, index) {
+                            return "<a href=\"javascript:void(0)\" onclick=\"goUrl('" + row.originalId + "', '" + row.articlesId + "')\">"+ value +"</a>";
+                        }
                     },
                     {
                         field: 'mpName',
