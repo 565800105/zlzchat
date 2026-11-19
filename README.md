@@ -4,6 +4,11 @@
 
 ## [官方部署文档 http://111.229.83.152:805](http://111.229.83.152:805)
 
+交流群
+
+<img width="338" height="476" alt="image" src="https://github.com/user-attachments/assets/c6a1583e-eab7-4421-b0d8-2b56eafcf327" />
+
+
 ## 技术栈
 
 | 层 | 技术 |
