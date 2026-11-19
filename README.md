@@ -34,7 +34,7 @@ python/
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/                # Vue3 前端
-├── Dockerfile               # 多阶段构建（前端 Node + 后端 Python）
+├── Dockerfile               # 单阶段构建（仅后端；前端在运行时/镜像中提供）
 ├── DEPLOY.md                # Docker 部署说明（SQLite / MySQL）
 ├── OPEN_API.md              # 对外开放 API 文档
 ├── MIGRATE_OLD_DATA.md      # 旧库数据导入说明（脚本在 backend/scripts/）
@@ -43,7 +43,37 @@ python/
 
 ## 快速启动
 
-### 1. 后端
+### 方式一：Docker 部署（推荐）
+
+镜像已发布到阿里云仓库，按设备架构选择，**无需拉源码、无需登录**，直接运行：
+
+**amd64**（x86 服务器 / 群晖 x86 机型 / 普通 PC、虚拟机）：
+```bash
+docker run -d --name zlzchat \
+  -p 8000:8100 \
+  --restart unless-stopped \
+  -v "$PWD/data:/app/data" \
+  -e DATA_DIR=/app/data \
+  -e DATABASE_URL="sqlite:////app/data/zlzchat.db" \
+  crpi-ah24egza1axyf372.cn-hangzhou.personal.cr.aliyuncs.com/docker-zlz/ck:latest
+```
+
+**arm64**（ARM 设备）：
+```bash
+docker run -d --name zlzchat \
+  -p 8000:8100 \
+  --restart unless-stopped \
+  -v "$PWD/data:/app/data" \
+  -e DATA_DIR=/app/data \
+  -e DATABASE_URL="sqlite:////app/data/zlzchat.db" \
+  crpi-ah24egza1axyf372.cn-hangzhou.personal.cr.aliyuncs.com/docker-zlz/ckarm64:latest
+```
+
+运行后访问 <http://设备IP:8000>（API 文档 `/docs`）。数据都存在挂载的 `./data`，容器重建不丢。MySQL、compose、arm64 构建、旧数据迁移等详见 [DEPLOY.md](DEPLOY.md)。
+
+### 方式二：本地开发
+
+#### 后端
 
 ```bash
 cd backend
@@ -53,12 +83,12 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8100
 
 首次启动会**自动检测空库并初始化**（建表 + 默认管理员 + 默认配置 + 默认任务），无需手动执行 `init_db.py`。也可以手动跑 `python scripts/init_db.py`（幂等，重复执行安全）。
 
-默认管理员：`admin` / `admin123`（登录后可在个人中心修改密码）。
+默认管理员：`admin` / `admin123`（登录后请在个人中心修改密码）。
 接口文档：<http://127.0.0.1:8100/docs>
 
 > 图片/数据库等数据默认放 `backend/data`，可通过环境变量 `DATA_DIR` 覆盖（Docker 挂载卷必用）。详见 [DEPLOY.md](DEPLOY.md)。
 
-### 2. 前端
+#### 前端
 
 ```bash
 cd frontend
