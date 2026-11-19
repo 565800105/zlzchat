@@ -95,7 +95,7 @@ DATABASE_URL=mysql+pymysql://root:密码@localhost:3308/zlzchatpython?charset=ut
 | `api.middlewareKey` | 中转服务通讯 key | 内置值 | 只读，用于解析账号 cookie，配置页不可改 |
 | `rss.name` / `rss.count` | 订阅源名称/条数 | 我的订阅/50 | Atom/RSS 输出 |
 
-### 微信读书账号扫码登录
+### 账号扫码登录
 
 账号配置页点击「扫码添加账号」即可登录，无需手填 Cookie/JWT：
 
@@ -103,7 +103,7 @@ DATABASE_URL=mysql+pymysql://root:密码@localhost:3308/zlzchatpython?charset=ut
 2. 前端展示二维码并每 2 秒轮询 `GET /api/admin/accounts/qrcode/check?uid=&installId=`。
 3. 扫码成功后后端调用外部 `{API_SERVER_URL}/ewmCallback`，用返回的 `nickName`/`token` **自动创建 category=1 的微信账号**，并调用 `refSkeyAPPNoTime` 刷新登录态。
 
-> 扫码依赖外部服务可达：需在 `backend/.env` 配置 `API_SERVER_URL`，并在「配置项」页填好 `api.token`。若外部服务不通，扫码接口会返回明确的配置错误提示。当前仅保留微信读书一种登录类型。
+> 扫码依赖外部服务可达：需在 `backend/.env` 配置 `API_SERVER_URL`，并在「配置项」页填好 `api.token`。若外部服务不通，扫码接口会返回明确的配置错误提示。
 
 外部文章拉取服务地址在 `backend/.env` 的 `API_SERVER_URL`。
 
