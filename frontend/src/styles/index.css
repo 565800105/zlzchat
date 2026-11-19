@@ -1,0 +1,300 @@
+/* ============================================================
+   全局样式：现代后台管理风格
+   统一配色 / 卡片圆角 / 柔和阴影 / 表格 zebra 条纹
+   ============================================================ */
+
+:root {
+  --app-primary: #165dff;
+  --app-primary-soft: #e8f3ff;
+  --app-success: #00b42a;
+  --app-danger: #f53f3f;
+  --app-warning: #ff7d00;
+  --app-text: #1d2129;
+  --app-text-2: #4e5969;
+  --app-text-3: #86909c;
+  --app-border: #e8ecf3;
+  --app-bg: #f4f6fb;
+  --app-card-radius: 14px;
+  --app-shadow: 0 4px 20px rgba(20, 37, 63, 0.05), 0 1px 3px rgba(20, 37, 63, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', sans-serif;
+  background: var(--app-bg);
+  color: var(--app-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 细腻滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cdd6e4;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aab8cf;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ---------- 通用卡片 ---------- */
+.app-card {
+  background: #fff;
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-shadow);
+  padding: 20px;
+}
+
+.page-container {
+  padding: 20px;
+}
+
+/* 页面标题栏 */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #165dff, #4080ff);
+}
+
+.page-desc {
+  font-size: 13px;
+  color: var(--app-text-3);
+  margin: 4px 0 0 12px;
+}
+
+/* ---------- 搜索栏 ---------- */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f7f8fa;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.search-bar .arco-form-item {
+  margin-bottom: 0;
+}
+
+/* ---------- 表格 ---------- */
+.table-card {
+  background: #fff;
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-shadow);
+  padding: 16px 20px 20px;
+}
+
+/* zebra 条纹 + 悬浮高亮 */
+.arco-table-td {
+  transition: background 0.15s;
+}
+
+.arco-table-tr:nth-child(even) .arco-table-td {
+  background: #fafbfc;
+}
+
+.arco-table-tr:hover .arco-table-td {
+  background: var(--app-primary-soft) !important;
+}
+
+.arco-table-th {
+  font-weight: 600 !important;
+  color: var(--app-text-2) !important;
+  background: #f7f8fa !important;
+}
+
+/* 缩略图 */
+.cell-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--app-border);
+  background: #f2f3f5;
+  vertical-align: middle;
+}
+
+.cell-thumb-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px dashed var(--app-border);
+  background: #f7f8fa;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-text-3);
+  font-size: 12px;
+}
+
+.text-ellipsis {
+  display: inline-block;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.text-danger {
+  color: var(--app-danger);
+}
+
+.text-muted {
+  color: var(--app-text-3);
+  font-size: 12px;
+}
+
+.mono {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 12px;
+}
+
+/* ---------- 统计卡片 ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-shadow);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.stat-icon.blue {
+  background: linear-gradient(135deg, #165dff, #4080ff);
+}
+.stat-icon.red {
+  background: linear-gradient(135deg, #f53f3f, #ff7875);
+}
+.stat-icon.green {
+  background: linear-gradient(135deg, #00b42a, #4cd263);
+}
+.stat-icon.orange {
+  background: linear-gradient(135deg, #ff7d00, #ffb400);
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--app-text);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--app-text-3);
+  margin-top: 2px;
+}
+
+/* ---------- 弹窗表单 ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+}
+
+.form-grid .arco-form-item {
+  margin-bottom: 18px;
+}
+
+.form-tip {
+  font-size: 12px;
+  color: var(--app-text-3);
+  margin-top: 4px;
+}
+
+/* 富文本预览 */
+.rich-content {
+  max-height: 420px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: #fafbfc;
+  line-height: 1.7;
+}
+
+.rich-content img {
+  max-width: 100%;
+}
+
+/* 操作按钮组 */
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
