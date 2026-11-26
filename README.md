@@ -1,3 +1,4 @@
+
 # ZLZCHAT 公众号信息管理系统（Python + Vue3 版）
 
 基于 **Python FastAPI** 实现后端、**Vue3 + Arco Design Vue** 实现前端。提供后台鉴权、微信文章定时拉取、飞书/钉钉通知、日志审计、对外开放 API 等能力。数据表统一使用 `sys_` 前缀（共 12 张）。
@@ -6,7 +7,7 @@
 
 交流群
 
-<img width="338" height="476" alt="image" src="https://github.com/user-attachments/assets/c6a1583e-eab7-4421-b0d8-2b56eafcf327" />
+<img width="313" height="484" alt="1fc545bd-e402-4699-a458-b471eda196de" src="https://github.com/user-attachments/assets/4ac068e2-424f-48f1-b0ff-4081130f5ea1" />
 
 
 ## 技术栈
